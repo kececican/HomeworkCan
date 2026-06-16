@@ -73,14 +73,20 @@ Bölüm 6'daki 6 zorunlu doğrulama senaryosunun tamamı aşağıda belgelenmiş
 
 **Test:** `KPI panosu üret` denildiğinde Skill/Project standardı uygulanmalı.
 
-**Prompt:** `Kalite KPI panosu üret.`
+**Prompt:** `KPI panosu üret.`
 
-**Sohbet:**
-> **Claude:** Üretim standardına göre E1 — Özet/KPI ekranını hazırlıyorum.
-> - Header: "VALEO Kalite KPI Panosu" + son güncelleme
-> - 6 KPI kartı: PPM, FPY, Iskarta ₺, Hata Adedi, Müşteri İade PPM, Kayıt Sayısı
-> - Renk kodlaması: kırmızı=kritik, sarı=uyarı, yeşil=hedef altı
-> - Tüm etiketler Türkçe, para değerleri binlik noktalı ₺ biçiminde ✅
+**Sohbet Linki:** https://claude.ai/share/3b8d3d4f-0f24-4164-a642-acd95ad48f18
+
+**Çıktı Gözlemi:**
+- PPM: 39.208 — Türkçe etiket, kırmızı (kritik) ✅
+- İlk Geçiş Verimi: 96.1% — Türkçe, yeşil ✅
+- İskarta Maliyeti: 3.323.742 ₺ — ₺ simgesi, binlik ayraç ✅
+- Müşteri İade: 25.0%, Kayıt Sayısı: 200 ✅
+- Hat bazında bar grafik + Tespit Aşaması halka grafik ✅
+- Tüm etiketler Türkçe ✅
+
+**Sonuç:** Tek kelime prompt ile standart otomatik uygulandı.
+Renk=anlam, Türkçe etiket, ₺ biçimi, doğru grafik seçimi — hepsi üretim standardından geldi. ✅
 
 [ekran görüntüsü: `ekran-goruntuleri/dogrulama-s4-standart.png`]
 
