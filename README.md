@@ -1,7 +1,7 @@
 # VALEO Kalite & Iskarta Dashboard — Ödev #1
 
-**Ad Soyad:** [ADINIZI YAZIN]
-**Ekip:** [Ar-Ge / Tasarım / After-Market]
+**Ad Soyad:** Can Keçeci
+**Ekip:** After-Market
 **Seçilen Araç:** Claude (claude.ai)
 **Senaryo:** S2 — Kalite & Iskarta Takibi
 **Hedef Persona:** Kalite Mühendisi
