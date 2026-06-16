@@ -9,18 +9,25 @@ Bölüm 6'daki 6 zorunlu doğrulama senaryosunun tamamı aşağıda belgelenmiş
 **Test:** Tur B'yi 2 kez üret; çıktı yapısı/tasarımı kararlı olmalı.
 
 ### 1. Üretim
-**Prompt:** `Üretim standardına göre 4 ekranlı Kalite dashboard'u üret.`
-**Çıktı:** [ekran görüntüsü: `ekran-goruntuleri/dogrulama-s1-uretim1.png`]
+**Tarih:** 16.06.2026
+**Prompt:** `veri.csv'deki veriyi oku, 4 ekranlı kalite dashboard'u üret.`
+**Çıktı:** `dashboard/cikti-B.html` + `dashboard/cikti-B-style.css`
+**Gözlenen:** 4 sekme (Özet KPI, Trend, Pareto, Detay), veri `fetch('veri.csv')` ile okundu, ayrı style.css üretildi.
 
 ### 2. Üretim (aynı prompt, yeni sohbet — aynı Project)
-**Prompt:** `Üretim standardına göre 4 ekranlı Kalite dashboard'u üret.`
-**Çıktı:** [ekran görüntüsü: `ekran-goruntuleri/dogrulama-s1-uretim2.png`]
+**Tarih:** 16.06.2026
+**Prompt:** `veri.csv'deki veriyi oku, 4 ekranlı kalite dashboard'u üret.`
+**Çıktı:** `dashboard/cikti-B-standalone.html`
+**Gözlenen:** Aynı 4 sekme yapısı, aynı Türkçe etiketler, veri yine fetch ile okundu, ayrı style.css üretildi.
 
-**Gözlem:** Her iki üretimde de:
-- Aynı 4 ekran yapısı (E1–E4)
-- Aynı renk paleti ve tipografi
-- Aynı ekran anatomisi (Header / Filtre / KPI / Grafik)
+**Karşılaştırma Sonucu — Her iki üretimde de:**
+- Aynı 4 ekran yapısı: Özet KPI / Trend / Pareto / Detay ✅
+- Veri katmanı: her ikisinde `fetch('veri.csv')` — koda gömülmedi ✅
+- Ayrı style.css dosyası üretildi — inline CSS yok ✅
+- Tüm etiketler Türkçe ✅
 - Anlamlı sapma gözlemlenmedi ✅
+
+**Sonuç:** Tur B kararlı ve tekrarlanabilir. Kalıcı talimat her üretimde aynı standardı uyguladı.
 
 ---
 
