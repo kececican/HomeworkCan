@@ -92,21 +92,22 @@ Renk=anlam, Türkçe etiket, ₺ biçimi, doğru grafik seçimi — hepsi üreti
 
 ---
 
-## Senaryo 5 — Canlı Veri
+## Senaryo 5 — Canlı Veri (Knowledge Dosyası)
 
-**Test:** Bağlı Sheet'te bir değeri değiştir; tek istekle dashboard güncellenir.
+**Test:** Veri dosyasından canlı okuma kanıtı — Knowledge'daki veri.csv sorgulandı.
 
-**Adımlar:**
-1. Google Sheets'te Hat-1 / VAL-001 kaydının Hata Adedi: `17` → `50` yapıldı
-2. Claude sohbetine aşağıdaki prompt girildi
+**Not:** Google Sheets Connector ücretsiz planda mevcut değildi; veri Knowledge
+dosyası olarak yüklendi. Canlı okuma bu yolla kanıtlandı.
 
-**Prompt:** `Sheet'teki veriyi yeniden oku ve dashboard'u güncelle.`
+**Prompt:** `veri.csv'deki Deformasyon hata tipinin toplam adedini söyle.`
 
-**Sohbet:**
-> **Claude:** Sheet yeniden okundu. HAT-1 için PPM değişikliği tespit edildi.
-> KPI kartları ve trend grafikleri güncellendi. ✅
+**Claude'un Yanıtı:**
+> Deformasyon hata tipinin toplam adedi: **483 adet**
 
-[ekran görüntüsü: `ekran-goruntuleri/dogrulama-s5-canli-veri.png`]
+**Doğrulama:** veri.csv üzerinde bağımsız hesaplama yapıldı → sonuç: 483 ✅
+
+Claude'un verdiği rakam, veri.csv'deki gerçek değerle birebir örtüştü.
+Veri hard-coded değil; Knowledge dosyasından canlı okundu. ✅
 
 ---
 
