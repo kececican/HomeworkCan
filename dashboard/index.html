@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VALEO — Kalite & Iskarta Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div>
+      <h1>📊 VALEO Kalite & Iskarta Dashboard</h1>
+      <span class="meta">Senaryo S2 · Kalite Mühendisi · Veri: veri.csv (Google Sheets bağlantılı)</span>
+    </div>
+    <div class="meta" id="last-update">Son güncelleme: —</div>
+  </header>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showScreen('e1',this)">E1 — Özet / KPI</button>
+    <button class="nav-btn"        onclick="showScreen('e2',this)">E2 — Trend</button>
+    <button class="nav-btn"        onclick="showScreen('e3',this)">E3 — Pareto</button>
+    <button class="nav-btn"        onclick="showScreen('e4',this)">E4 — Detay</button>
+  </nav>
+
+  <!-- FILTRE CUBUGU -->
+  <div class="filter-bar">
+    <div>
+      <label for="f-baslangic">Başlangıç&nbsp;</label>
+      <input type="date" id="f-baslangic" value="2024-01-01" />
+    </div>
+    <div>
+      <label for="f-bitis">Bitiş&nbsp;</label>
+      <input type="date" id="f-bitis" value="2024-07-15" />
+    </div>
+    <div>
+      <label for="f-hat">Hat&nbsp;</label>
+      <select id="f-hat">
+        <option value="">Tümü</option>
+        <option>Hat-1</option><option>Hat-2</option>
+        <option>Hat-3</option><option>Hat-4</option>
+      </select>
+    </div>
+    <div>
+      <label for="f-hata">Hata Tipi&nbsp;</label>
+      <select id="f-hata">
+        <option value="">Tümü</option>
+        <option>Boyut Hatası</option><option>Yüzey Çizigi</option>
+        <option>Malzeme Hatası</option><option>Montaj Hatası</option>
+        <option>Renk Uyumsuzluğu</option><option>Kaynak Hatası</option>
+        <option>Deformasyon</option>
+      </select>
+    </div>
+    <button class="filter-btn" onclick="applyFilters()">🔍 Filtrele</button>
+  </div>
+
+  <main class="main">
+
+    <!-- ══════════════════════════════════════════════════════════
+         E1 — ÖZET / KPI
+    ══════════════════════════════════════════════════════════ -->
+    <section id="e1" class="screen active">
+      <p class="section-title">Özet · KPI Gösterge Paneli</p>
+
+      <div class="kpi-grid" id="kpi-grid">
+        <!-- KPI kartları JS ile doldurulur -->
+        <div class="state-msg loading"><div class="icon"></div><p></p></div>
+      </div>
+
+      <div class="two-col">
+        <div class="chart-card">
+          <h2>Hat Bazında PPM Karşılaştırması</h2>
+          <div class="chart-wrap"><canvas id="chart-hat-ppm"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h2>Tespit Aşamasına Göre Hata Dağılımı</h2>
+          <div class="chart-wrap"><canvas id="chart-tespit"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         E2 — TREND
+    ══════════════════════════════════════════════════════════ -->
+    <section id="e2" class="screen">
+      <p class="section-title">Trend · Haftalık PPM ve Iskarta Maliyet Değişimi</p>
+
+      <div class="chart-card">
+        <h2>Haftalık PPM Trendi — Mevcut Dönem vs Hedef</h2>
+        <div class="chart-wrap"><canvas id="chart-trend-ppm"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h2>Aylık Iskarta Maliyeti (₺)</h2>
+        <div class="chart-wrap"><canvas id="chart-trend-maliyet"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         E3 — KIRИЛИМ / PARETO
+    ══════════════════════════════════════════════════════════ -->
+    <section id="e3" class="screen">
+      <p class="section-title">Kırılım · Hata Tipi Pareto Analizi</p>
+
+      <div class="chart-card">
+        <h2>Hata Tipi Pareto — Adet & Kümülatif %</h2>
+        <div class="chart-wrap" style="height:320px"><canvas id="chart-pareto"></canvas></div>
+      </div>
+
+      <div class="two-col">
+        <div class="chart-card">
+          <h2>Hat Bazında Iskarta Maliyeti (₺)</h2>
+          <div class="chart-wrap"><canvas id="chart-hat-maliyet"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h2>Parça No — En Çok Hatalı İlk 10</h2>
+          <div class="chart-wrap"><canvas id="chart-parca"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         E4 — DETAY / AKSİYON
+    ══════════════════════════════════════════════════════════ -->
+    <section id="e4" class="screen">
+      <p class="section-title">Detay · Kayıt Düzeyinde İnceleme</p>
+
+      <div class="table-card">
+        <h2>Kalite Kayıtları <span id="tablo-sayi" style="font-size:12px;font-weight:400;color:var(--color-text-meta)"></span></h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tarih</th>
+                <th>Parça No</th>
+                <th>Hat</th>
+                <th>Vardiya</th>
+                <th>Hata Tipi</th>
+                <th>Hata Adedi</th>
+                <th>Üretim Adedi</th>
+                <th>PPM</th>
+                <th>Iskarta Maliyet</th>
+                <th>Tespit Aşaması</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody id="tablo-body">
+              <tr><td colspan="11"><div class="state-msg loading"><div class="icon"></div><p></p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-footer">
+          <span id="page-info" style="font-size:12px;color:var(--color-text-meta)"></span>
+          <div class="page-btns" id="page-btns"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   VERİ KATMANI
+   NOT: Gerçek ortamda bu bölüm Google Sheets API / Connector
+   üzerinden canlı okunur. Demo amacıyla veri.csv fetch edilir.
+   Veri asla bu dosyaya gömülmez.
+══════════════════════════════════════════════════════════════ */
+
+let RAW_DATA = [];
+let FILTERED = [];
+const PAGE_SIZE = 10;
+let currentPage = 1;
+
+const CHARTS = {};
+
+async function loadData() {
+  try {
+    const res = await fetch('../veri/veri.csv');
+    if (!res.ok) throw new Error('CSV okunamadı');
+    const text = await res.text();
+    const rows = text.trim().split('\n');
+    const headers = rows[0].split(',').map(h => h.trim());
+    RAW_DATA = rows.slice(1).map(line => {
+      const vals = line.split(',');
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
+      obj['Hata Adedi']        = parseInt(obj['Hata Adedi'] || 0);
+      obj['Üretim Adedi']      = parseInt(obj['Üretim Adedi'] || 0);
+      obj['Iskarta Maliyeti (₺)'] = parseFloat(obj['Iskarta Maliyeti (₺)'] || 0);
+      obj['PPM']               = obj['Üretim Adedi'] > 0
+        ? Math.round(obj['Hata Adedi'] / obj['Üretim Adedi'] * 1_000_000) : 0;
+      obj['_tarih']            = parseTarih(obj['Tarih']);
+      return obj;
+    });
+    FILTERED = [...RAW_DATA];
+    document.getElementById('last-update').textContent =
+      'Son güncelleme: ' + new Date().toLocaleString('tr-TR');
+    render();
+  } catch(e) {
+    showGlobalError(e.message);
+  }
+}
+
+function parseTarih(str) {
+  if (!str) return null;
+  const [d, m, y] = str.split('.');
+  return new Date(`${y}-${m}-${d}`);
+}
+
+function formatMaliyet(val) {
+  return val.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₺';
+}
+
+/* ── Filtre ── */
+function applyFilters() {
+  const bas    = document.getElementById('f-baslangic').value;
+  const bit    = document.getElementById('f-bitis').value;
+  const hat    = document.getElementById('f-hat').value;
+  const hata   = document.getElementById('f-hata').value;
+  const dBas   = bas ? new Date(bas) : null;
+  const dBit   = bit ? new Date(bit) : null;
+
+  FILTERED = RAW_DATA.filter(r => {
+    if (dBas && r._tarih < dBas) return false;
+    if (dBit && r._tarih > dBit) return false;
+    if (hat  && r['Hat']       !== hat)  return false;
+    if (hata && r['Hata Tipi'] !== hata) return false;
+    return true;
+  });
+
+  currentPage = 1;
+  render();
+}
+
+/* ── Ekran geçişi ── */
+function showScreen(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── Ana render ── */
+function render() {
+  if (FILTERED.length === 0) {
+    renderEmptyState();
+    return;
+  }
+  renderKPI();
+  renderHatPPM();
+  renderTespit();
+  renderTrendPPM();
+  renderTrendMaliyet();
+  renderPareto();
+  renderHatMaliyet();
+  renderParca();
+  renderTablo();
+}
+
+/* ── KPI ── */
+function renderKPI() {
+  const toplamHata    = FILTERED.reduce((s,r) => s + r['Hata Adedi'], 0);
+  const toplamUretim  = FILTERED.reduce((s,r) => s + r['Üretim Adedi'], 0);
+  const toplamMaliyet = FILTERED.reduce((s,r) => s + r['Iskarta Maliyeti (₺)'], 0);
+  const ppm           = toplamUretim > 0 ? Math.round(toplamHata / toplamUretim * 1_000_000) : 0;
+  const fpy           = toplamUretim > 0 ? ((1 - toplamHata / toplamUretim) * 100).toFixed(1) : '—';
+  const musteriIade   = FILTERED.filter(r => r['Tespit Aşaması'] === 'Müşteri İadesi');
+  const iadeAdet      = musteriIade.reduce((s,r) => s + r['Hata Adedi'], 0);
+  const iadePPM       = toplamUretim > 0 ? Math.round(iadeAdet / toplamUretim * 1_000_000) : 0;
+
+  const kpis = [
+    { label: 'Toplam PPM',          value: ppm.toLocaleString('tr-TR'),    delta: ppm > 50000 ? '▲ Hedef Üstü' : '▼ Hedef Altı', cls: ppm > 50000 ? 'bad' : 'good' },
+    { label: 'İlk Geçiş Verimi',    value: fpy + ' %',                     delta: fpy >= 96 ? '✓ Hedef Karşılandı' : '✗ Hedef Altında', cls: fpy >= 96 ? 'good' : 'bad' },
+    { label: 'Toplam Iskarta (₺)',   value: formatMaliyet(toplamMaliyet),   delta: toplamMaliyet > 4000000 ? '▲ Yüksek' : '▼ Normal', cls: toplamMaliyet > 4000000 ? 'bad' : 'warn' },
+    { label: 'Toplam Hata Adedi',   value: toplamHata.toLocaleString('tr-TR'), delta: toplamHata + ' kayıt', cls: '' },
+    { label: 'Müşteri İade PPM',    value: iadePPM.toLocaleString('tr-TR'), delta: iadePPM > 5000 ? '▲ Kritik' : '▼ Kontrol Altında', cls: iadePPM > 5000 ? 'bad' : 'good' },
+    { label: 'Kayıt Sayısı',        value: FILTERED.length.toLocaleString('tr-TR'), delta: 'Seçili dönem', cls: '' },
+  ];
+
+  document.getElementById('kpi-grid').innerHTML = kpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-delta ${k.cls}">${k.delta}</div>
+    </div>`).join('');
+}
+
+/* ── Hat PPM bar chart ── */
+function renderHatPPM() {
+  const hatlar = ['Hat-1','Hat-2','Hat-3','Hat-4'];
+  const ppmler = hatlar.map(h => {
+    const rows = FILTERED.filter(r => r['Hat'] === h);
+    const th = rows.reduce((s,r) => s + r['Hata Adedi'], 0);
+    const tu = rows.reduce((s,r) => s + r['Üretim Adedi'], 0);
+    return tu > 0 ? Math.round(th / tu * 1_000_000) : 0;
+  });
+  drawBar('chart-hat-ppm', hatlar, ppmler, 'PPM', '#1E40AF');
+}
+
+/* ── Tespit pie chart ── */
+function renderTespit() {
+  const asamalar = ['Gelen Kontrol','Süreç İçi','Final Kontrol','Müşteri İadesi'];
+  const renkler  = ['#1E40AF','#16A34A','#D97706','#DC2626'];
+  const adetler  = asamalar.map(a =>
+    FILTERED.filter(r => r['Tespit Aşaması'] === a).reduce((s,r) => s + r['Hata Adedi'], 0));
+  if (CHARTS['chart-tespit']) CHARTS['chart-tespit'].destroy();
+  CHARTS['chart-tespit'] = new Chart(document.getElementById('chart-tespit'), {
+    type: 'doughnut',
+    data: { labels: asamalar, datasets: [{ data: adetler, backgroundColor: renkler, borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { font: { size: 12 } } } } }
+  });
+}
+
+/* ── Trend PPM (haftalık) ── */
+function renderTrendPPM() {
+  const buckets = {};
+  FILTERED.forEach(r => {
+    if (!r._tarih) return;
+    const wk = getWeekKey(r._tarih);
+    if (!buckets[wk]) buckets[wk] = { hata: 0, uretim: 0 };
+    buckets[wk].hata   += r['Hata Adedi'];
+    buckets[wk].uretim += r['Üretim Adedi'];
+  });
+  const labels = Object.keys(buckets).sort();
+  const ppmler = labels.map(k =>
+    buckets[k].uretim > 0 ? Math.round(buckets[k].hata / buckets[k].uretim * 1_000_000) : 0);
+  const hedef  = labels.map(() => 50000);
+
+  if (CHARTS['chart-trend-ppm']) CHARTS['chart-trend-ppm'].destroy();
+  CHARTS['chart-trend-ppm'] = new Chart(document.getElementById('chart-trend-ppm'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'PPM (Mevcut)', data: ppmler, borderColor: '#1E40AF', backgroundColor: 'rgba(30,64,175,.1)', tension: .4, fill: true, pointRadius: 3 },
+        { label: 'Hedef (50.000)', data: hedef, borderColor: '#DC2626', borderDash: [6,3], pointRadius: 0 },
+      ]
+    },
+    options: lineOpts('Hafta', 'PPM')
+  });
+}
+
+/* ── Trend Maliyet (aylık) ── */
+function renderTrendMaliyet() {
+  const buckets = {};
+  FILTERED.forEach(r => {
+    if (!r._tarih) return;
+    const mk = r._tarih.toLocaleString('tr-TR', { month: 'long', year: 'numeric' });
+    buckets[mk] = (buckets[mk] || 0) + r['Iskarta Maliyeti (₺)'];
+  });
+  const labels = Object.keys(buckets);
+  const deger  = labels.map(k => Math.round(buckets[k]));
+  drawBar('chart-trend-maliyet', labels, deger, 'Iskarta Maliyeti (₺)', '#D97706');
+}
+
+/* ── Pareto ── */
+function renderPareto() {
+  const agg = {};
+  FILTERED.forEach(r => { agg[r['Hata Tipi']] = (agg[r['Hata Tipi']] || 0) + r['Hata Adedi']; });
+  const sorted = Object.entries(agg).sort((a,b) => b[1]-a[1]);
+  const labels = sorted.map(e => e[0]);
+  const adetler = sorted.map(e => e[1]);
+  const toplam = adetler.reduce((s,v) => s+v, 0);
+  let cum = 0;
+  const kumKat = adetler.map(v => { cum += v; return +(cum / toplam * 100).toFixed(1); });
+
+  if (CHARTS['chart-pareto']) CHARTS['chart-pareto'].destroy();
+  CHARTS['chart-pareto'] = new Chart(document.getElementById('chart-pareto'), {
+    data: {
+      labels,
+      datasets: [
+        { type:'bar',  label:'Hata Adedi', data: adetler, backgroundColor:'#1E40AF', yAxisID:'y' },
+        { type:'line', label:'Kümülatif %', data: kumKat, borderColor:'#DC2626', yAxisID:'y2', tension:.4, pointRadius:4 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position:'top' } },
+      scales: {
+        y:  { beginAtZero:true, title:{ display:true, text:'Hata Adedi' } },
+        y2: { beginAtZero:true, max:100, position:'right', title:{ display:true, text:'Kümülatif %' }, grid:{ drawOnChartArea:false } }
+      }
+    }
+  });
+}
+
+/* ── Hat Maliyet ── */
+function renderHatMaliyet() {
+  const hatlar = ['Hat-1','Hat-2','Hat-3','Hat-4'];
+  const maliyetler = hatlar.map(h =>
+    Math.round(FILTERED.filter(r => r['Hat'] === h).reduce((s,r) => s + r['Iskarta Maliyeti (₺)'], 0)));
+  drawBar('chart-hat-maliyet', hatlar, maliyetler, 'Iskarta Maliyeti (₺)', '#D97706');
+}
+
+/* ── Parça No Top 10 ── */
+function renderParca() {
+  const agg = {};
+  FILTERED.forEach(r => { agg[r['Parça No']] = (agg[r['Parça No']] || 0) + r['Hata Adedi']; });
+  const sorted = Object.entries(agg).sort((a,b) => b[1]-a[1]).slice(0,10);
+  const labels = sorted.map(e => e[0]);
+  const adetler = sorted.map(e => e[1]);
+  if (CHARTS['chart-parca']) CHARTS['chart-parca'].destroy();
+  CHARTS['chart-parca'] = new Chart(document.getElementById('chart-parca'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label:'Hata Adedi', data:adetler, backgroundColor:'#7C3AED' }] },
+    options: { ...lineOpts('Parça No','Hata Adedi'), indexAxis:'y' }
+  });
+}
+
+/* ── Tablo ── */
+const DURUM_POOL = ['Açık','Açık','İnceleniyor','Kapalı','Açık','İnceleniyor','Kapalı'];
+function durumBadge(ppm) {
+  if (ppm > 80000) return '<span class="badge badge-red">🔴 Açık</span>';
+  if (ppm > 40000) return '<span class="badge badge-yellow">🟡 İnceleniyor</span>';
+  return '<span class="badge badge-green">🟢 Kapalı</span>';
+}
+
+function renderTablo() {
+  const total = FILTERED.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const slice = FILTERED.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('tablo-sayi').textContent = `— ${total.toLocaleString('tr-TR')} kayıt`;
+  document.getElementById('page-info').textContent =
+    `${start+1}–${Math.min(start+PAGE_SIZE, total)} / ${total}`;
+
+  if (slice.length === 0) {
+    document.getElementById('tablo-body').innerHTML =
+      '<tr><td colspan="11"><div class="state-msg empty"><div class="icon"></div><p></p></div></td></tr>';
+    return;
+  }
+
+  document.getElementById('tablo-body').innerHTML = slice.map(r => `
+    <tr>
+      <td>${r['Tarih']}</td>
+      <td><b>${r['Parça No']}</b></td>
+      <td>${r['Hat']}</td>
+      <td>${r['Vardiya']}</td>
+      <td>${r['Hata Tipi']}</td>
+      <td style="text-align:right">${r['Hata Adedi'].toLocaleString('tr-TR')}</td>
+      <td style="text-align:right">${r['Üretim Adedi'].toLocaleString('tr-TR')}</td>
+      <td style="text-align:right">${r['PPM'].toLocaleString('tr-TR')}</td>
+      <td style="text-align:right">${formatMaliyet(r['Iskarta Maliyeti (₺)'])}</td>
+      <td>${r['Tespit Aşaması']}</td>
+      <td>${durumBadge(r['PPM'])}</td>
+    </tr>`).join('');
+
+  // Sayfa butonları
+  const btnContainer = document.getElementById('page-btns');
+  btnContainer.innerHTML = '';
+  for (let p = 1; p <= totalPages; p++) {
+    if (totalPages > 7 && p > 3 && p < totalPages - 1) { if (p === 4) btnContainer.innerHTML += '<span style="padding:4px">…</span>'; continue; }
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+    btn.textContent = p;
+    btn.onclick = () => { currentPage = p; renderTablo(); };
+    btnContainer.appendChild(btn);
+  }
+}
+
+/* ── Yardımcılar ── */
+function getWeekKey(d) {
+  const tmp = new Date(d);
+  tmp.setDate(tmp.getDate() - tmp.getDay());
+  return tmp.toLocaleDateString('tr-TR', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+
+function drawBar(id, labels, data, yLabel, color) {
+  if (CHARTS[id]) CHARTS[id].destroy();
+  CHARTS[id] = new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: yLabel, data, backgroundColor: color }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, title: { display: true, text: yLabel } } }
+    }
+  });
+}
+
+function lineOpts(xLabel, yLabel) {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position:'top' } },
+    scales: {
+      x: { title: { display: true, text: xLabel } },
+      y: { beginAtZero: true, title: { display: true, text: yLabel } }
+    }
+  };
+}
+
+function renderEmptyState() {
+  document.getElementById('kpi-grid').innerHTML =
+    '<div class="state-msg empty"><div class="icon"></div><p></p></div>';
+}
+
+function showGlobalError(msg) {
+  document.getElementById('kpi-grid').innerHTML =
+    `<div class="state-msg error"><div class="icon"></div><p>${msg}</p></div>`;
+}
+
+/* ── Başlat ── */
+loadData();
+</script>
+</body>
+</html>
