@@ -115,19 +115,27 @@ Veri hard-coded değil; Knowledge dosyasından canlı okundu. ✅
 
 **Test:** Bağlamı nasıl yalın tuttuğunu göster.
 
-**Yöntem:**
-1. Üretim standardı (`uretim-standardi.md`) Project'e **bilgi dosyası** olarak yüklendi — sohbete yapıştırılmadı.
-2. Kalıcı talimatlar Project talimat alanına yazıldı — her sohbette tekrar girilmedi.
-3. Uzayan sohbette özetlenip yeni sohbet açıldı; yalnızca özet taşındı.
+**Prompt:** `Bu projede bağlamı nasıl yalın tutuyorsun?`
 
-**Bağlam Bütçesi Notu:**
+**Claude'un Yanıtı:**
+> 1. **Knowledge dosyası:** Tasarım sistemi ve kurallar sohbete yapıştırılmak yerine
+>    Knowledge dosyasına yüklendi. Claude ihtiyaç duyduğunda okur, her mesajda tekrar gönderilmez.
+> 2. **Kalıcı talimatlar:** Zorunlu kurallar proje talimat alanına yazıldı.
+>    Her konuşmada sistem koşullarını açıklamak gerekmez; kurallar otomatik geçerli.
+> 3. **Veri dosyası ayrımı:** veri.csv sohbete yapıştırılmadı, proje dosyası olarak
+>    bağlı tutuldu. Büyük veri blokları bağlamı şişirmiyor.
+> 4. **"Ne her zaman lazım / ne o an lazım" ayrımı:**
+>    Sabit kurallar → proje talimatına, referans belgeler → knowledge dosyasına,
+>    ham veri → proje dosyasına. Sohbette yalnızca aktif konuşma kalıyor.
 
-| Yaklaşım | Token Maliyeti | Sonuç |
-|----------|----------------|-------|
-| Her sohbete standart yapıştırma | ~2.000 token | Bağlam şişer, odak dağılır |
-| Project bilgisi olarak yükleme | ~0 token (sohbet başına) | Sohbet kısa, asistan odaklı |
+**Bağlam Bütçesi Özeti:**
 
-[ekran görüntüsü: `ekran-goruntuleri/dogrulama-s6-context.png`]
+| Yaklaşım | Sonuç |
+|----------|-------|
+| Her sohbete standart yapıştırma | Bağlam şişer, odak dağılır |
+| Project Knowledge olarak yükleme | Sohbet kısa, asistan odaklı ✅ |
+| Kalıcı talimat alanı | Her sohbette otomatik geçerli ✅ |
+| Veri ayrık dosyada | Büyük blok bağlamı doldurmaz ✅ |
 
 ---
 
