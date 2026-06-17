@@ -1,6 +1,6 @@
 # Tur A — Donatımsız Oturum Kaydı
 
-**Tarih:** [DOLDURUN]
+**Tarih:** 16.06.2026
 **Araç:** Claude (claude.ai) — Boş sohbet, Project/Gem YOK, Talimat YOK, Connector YOK
 **Senaryo:** S2 — Kalite & Iskarta Takibi
 
@@ -56,4 +56,4 @@ Veri aşağıda. 4 ekran olsun: özet KPI, trend, pareto, detay tablosu.
 
 ---
 
-**Paylaşılan Sohbet Linki:** [DOLDURUN — claude.ai Share linki]
+**Paylaşılan Sohbet Linki:** https://claude.ai/chat/35ac2f9a-de93-4983-ad32-99986c2c10fc

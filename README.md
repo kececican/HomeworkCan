@@ -12,9 +12,9 @@
 
 | Tur | Link |
 |-----|------|
-| Tur A (Donatımsız) | [CLAUDE SHARE LİNKİNİ BURAYA YAZIN] |
-| Tur B (Donatılmış) | [CLAUDE SHARE LİNKİNİ BURAYA YAZIN] |
-| Doğrulama Oturumu | [CLAUDE SHARE LİNKİNİ BURAYA YAZIN] |
+| Tur A (Donatımsız) | https://claude.ai/chat/35ac2f9a-de93-4983-ad32-99986c2c10fc |
+| Tur B (Donatılmış) | https://claude.ai/chat/ca4a6ddc-fe19-4657-b826-2049102a36bf |
+| Doğrulama Oturumu | https://claude.ai/share/3b8d3d4f-0f24-4164-a642-acd95ad48f18 |
 
 > **Not:** Linklerin herkese açık (Anyone with the link) ayarında olduğundan emin olun.
 

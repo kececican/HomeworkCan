@@ -1,6 +1,6 @@
 # Tur B — Donatılmış Oturum Kaydı
 
-**Tarih:** [DOLDURUN]
+**Tarih:** 16.06.2026
 **Araç:** Claude (claude.ai) — Project aktif, Talimat aktif, Connector bağlı
 **Senaryo:** S2 — Kalite & Iskarta Takibi
 
@@ -89,4 +89,4 @@ Veriyi koda gömme. Stil tek style.css'ten gelsin.
 
 ---
 
-**Paylaşılan Sohbet Linki:** [DOLDURUN — claude.ai Share linki]
+**Paylaşılan Sohbet Linki:** https://claude.ai/chat/ca4a6ddc-fe19-4657-b826-2049102a36bf
