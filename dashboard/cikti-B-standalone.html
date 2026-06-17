@@ -6,29 +6,32 @@
   <title>VALEO — Kalite & Iskarta Dashboard</title>
   <style>
 /* ===== VALEO Kalite Dashboard — style.css ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ── Reset & Base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --mevcut:    #1E40AF;
-  --onceki:    #94A3B8;
-  --iyi:       #16A34A;
-  --uyari:     #D97706;
-  --kritik:    #DC2626;
-  --zemin:     #F8FAFC;
-  --kart:      #FFFFFF;
-  --sinir:     #E2E8F0;
-  --metin-1:   #1E293B;
-  --metin-2:   #334155;
-  --metin-3:   #475569;
-  --metin-4:   #64748B;
-  --shadow:    0 1px 3px rgba(0,0,0,0.08);
+  --mevcut:    #82E600;
+  --onceki:    #16445F;
+  --iyi:       #82E600;
+  --uyari:     #F59E0B;
+  --kritik:    #EF4444;
+  --zemin:     #1D2433;
+  --kart:      #243347;
+  --sinir:     #16445F;
+  --metin-1:   #F1F3F9;
+  --metin-2:   #D8DCE8;
+  --metin-3:   #A8B0C4;
+  --metin-4:   #7A8499;
+  --shadow:    0 1px 6px rgba(0,0,0,0.3);
   --r:         8px;
   --font:      'Inter', system-ui, sans-serif;
+  --font-head: 'Montserrat', 'Inter', sans-serif;
   --mono:      'JetBrains Mono', monospace;
 }
+
+h1, h2, h3, .kpi-value, .tab-btn { font-family: var(--font-head); }
 
 html, body {
   height: 100%;
@@ -376,8 +379,8 @@ tbody tr {
   transition: background 0.1s;
 }
 
-tbody tr:hover { background: #F1F5F9; }
-tbody tr.expanded { background: #EFF6FF; }
+tbody tr:hover { background: #2d4060; }
+tbody tr.expanded { background: #1e3a5a; }
 
 tbody td {
   padding: 9px 12px;
@@ -391,7 +394,7 @@ tbody td {
 
 .detail-body {
   padding: 12px 16px;
-  background: #F8FAFC;
+  background: var(--zemin);
   border-top: 1px solid var(--sinir);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -419,9 +422,9 @@ tbody td {
   border-radius: 20px;
 }
 
-.badge-acik     { background: #FEE2E2; color: #DC2626; }
-.badge-inceleme { background: #FEF3C7; color: #D97706; }
-.badge-kapali   { background: #DCFCE7; color: #16A34A; }
+.badge-acik     { background: #3d1f1f; color: #EF4444; }
+.badge-inceleme { background: #3d3210; color: #F59E0B; }
+.badge-kapali   { background: #1a3320; color: #82E600; }
 
 /* ── Pagination ── */
 .pagination {
@@ -449,7 +452,7 @@ tbody td {
 
 .page-btn:hover:not(:disabled) { background: var(--sinir); }
 .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.page-btn.current { background: var(--mevcut); color: #fff; border-color: var(--mevcut); }
+.page-btn.current { background: var(--mevcut); color: #1D2433; border-color: var(--mevcut); }
 
 /* ── Status States ── */
 .state-box {
@@ -475,7 +478,7 @@ tbody td {
   font-weight: 500;
   padding: 2px 7px;
   border-radius: 4px;
-  background: #EFF6FF;
+  background: #1e3a5a;
   color: var(--mevcut);
 }
 
