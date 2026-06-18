@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VALEO — Ödev #1 Sunum</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1D2433;
+      color: #F1F3F9;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slides { width: 100%; height: 100vh; }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      padding: 52px 80px;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    .slide.active { display: flex; }
+
+    .slide-cover  { background: linear-gradient(135deg, #1D2433 0%, #16445F 100%); }
+    .slide-dark   { background: #1D2433; }
+    .slide-mid    { background: #243347; }
+    .slide-close  { background: linear-gradient(135deg, #16445F 0%, #1D2433 100%); }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #82E600;
+      margin-bottom: 16px;
+    }
+    .divider {
+      width: 40px; height: 4px;
+      background: #82E600;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 50px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #82E600;
+      margin-bottom: 8px;
+    }
+    p { font-size: 15px; line-height: 1.65; color: #A8B0C4; }
+    .accent { color: #82E600; }
+    strong { color: #F1F3F9; }
+
+    /* Cards */
+    .cards { display: grid; gap: 16px; }
+    .cards-2 { grid-template-columns: 1fr 1fr; }
+    .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .cards-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+    .card {
+      background: #1D2433;
+      border: 1px solid #16445F;
+      border-radius: 10px;
+      padding: 22px;
+    }
+    .card-g { border-left: 3px solid #82E600; }
+    .card-b { border-left: 3px solid #16445F; }
+    .card-r { border-left: 3px solid #EF4444; }
+    .card-top-g { border-top: 3px solid #82E600; border-left: none; }
+    .card-top-r { border-top: 3px solid #EF4444; border-left: none; }
+
+    /* Stats */
+    .stat-row { display: flex; gap: 36px; margin-top: 16px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      font-weight: 800;
+      color: #82E600;
+      line-height: 1;
+    }
+    .stat-label { font-size: 12px; color: #7A8499; margin-top: 6px; }
+
+    /* List */
+    ul { list-style: none; }
+    ul li {
+      font-size: 15px;
+      color: #D8DCE8;
+      padding: 9px 0;
+      border-bottom: 1px solid #16445F;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    ul li:last-child { border-bottom: none; }
+    .dot {
+      width: 7px; height: 7px;
+      background: #82E600;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .dot-r { background: #EF4444; }
+
+    /* Code */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      background: #16445F;
+      color: #82E600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Compare */
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
+    .compare-col {
+      background: #1D2433;
+      border-radius: 10px;
+      padding: 24px;
+      border: 1px solid #16445F;
+    }
+    .compare-col.bad  { border-top: 3px solid #EF4444; }
+    .compare-col.good { border-top: 3px solid #82E600; }
+    .compare-col h3 { font-size: 16px; margin-bottom: 14px; }
+    .compare-col.bad  h3 { color: #EF4444; }
+    .compare-col.good h3 { color: #82E600; }
+
+    /* Scenario boxes */
+    .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 12px; }
+    .scenario-box {
+      background: #1D2433;
+      border: 1px solid #16445F;
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .scenario-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: #82E600;
+    }
+    .scenario-box h3 { font-size: 13px; margin: 6px 0 4px; }
+    .scenario-box p { font-size: 12px; }
+
+    /* Cover meta */
+    .cover-meta { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; }
+    .cover-meta-item label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #7A8499;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .cover-meta-item span { font-size: 15px; font-weight: 600; }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      background: rgba(130,230,0,0.12);
+      color: #82E600;
+      border: 1px solid rgba(130,230,0,0.4);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .badge-r {
+      background: rgba(239,68,68,0.12);
+      color: #EF4444;
+      border-color: rgba(239,68,68,0.4);
+    }
+
+    /* Two-col layout */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    .two-col-3 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: start; }
+
+    /* Flow diagram */
+    .flow { display: flex; align-items: center; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+    .flow-box {
+      background: #243347;
+      border: 1px solid #16445F;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      text-align: center;
+    }
+    .flow-arrow { color: #82E600; font-size: 20px; }
+
+    /* Nav */
+    .nav {
+      position: fixed;
+      bottom: 28px;
+      right: 44px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 100;
+    }
+    .nav button {
+      background: #243347;
+      border: 1px solid #16445F;
+      color: #F1F3F9;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .nav button:hover:not(:disabled) { background: #82E600; color: #1D2433; }
+    .nav button:disabled { opacity: 0.3; cursor: default; }
+    #slide-counter { font-size: 12px; color: #7A8499; min-width: 50px; text-align: center; }
+
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: #82E600;
+      transition: width 0.3s;
+    }
+
+    /* Slide number top-right */
+    .slide-num {
+      position: absolute;
+      top: 28px; right: 48px;
+      font-size: 12px;
+      color: #16445F;
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="slides">
+
+  <!-- 1. KAPAK -->
+  <div class="slide slide-cover active">
+    <div class="slide-num">01 / 14</div>
+    <div class="tag">AdAstra × VALEO · Ödev #1 · 2026</div>
+    <h1>Yönetişimli<br>Dashboard<br><span class="accent">Üretim Hattı</span></h1>
+    <p style="max-width:560px; font-size:17px; margin-top:8px;">Claude'u sadece kullanmak değil — her seferinde aynı kalitede çıktı veren bir sistem kurmak.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><label>Ad Soyad</label><span>Can Keçeci</span></div>
+      <div class="cover-meta-item"><label>Ekip</label><span>After-Market</span></div>
+      <div class="cover-meta-item"><label>Senaryo</label><span>S2 — Kalite & Iskarta</span></div>
+      <div class="cover-meta-item"><label>Araç</label><span>Claude (claude.ai)</span></div>
+      <div class="cover-meta-item"><label>Teslim</label><span>18 Haziran 2026</span></div>
+    </div>
+  </div>
+
+  <!-- 2. SENARYO -->
+  <div class="slide slide-dark">
+    <div class="slide-num">02 / 14</div>
+    <div class="tag">Adım 1 — Senaryo Seçimi</div>
+    <div class="divider"></div>
+    <h2>S2 — Kalite & Iskarta Takibi</h2>
+    <div class="two-col">
+      <div>
+        <p style="font-size:16px; margin-bottom:20px;">VALEO üretim hatlarında ortaya çıkan kalite sorunlarını ve iskarta maliyetlerini izlemek, hata tipi / hat / tespit aşaması bazında analiz etmek ve aksiyon önceliklendirmek için tasarlandı.</p>
+        <p style="margin-bottom:16px;"><strong>Hedef Persona:</strong> Kalite Mühendisi</p>
+        <p><strong>Panonun cevapladığı 3 soru:</strong></p>
+        <ul style="margin-top:12px;">
+          <li><div class="dot"></div>Bu dönemde hangi hata tipi en fazla iskarta maliyetine yol açtı?</li>
+          <li><div class="dot"></div>PPM trendi iyileşiyor mu, kötüleşiyor mu?</li>
+          <li><div class="dot"></div>Müşteriye ulaşan hatalar hangi hat/parçada yoğunlaşıyor?</li>
+        </ul>
+      </div>
+      <div class="stat-row" style="flex-direction:column; gap:14px;">
+        <div class="card card-g">
+          <div class="stat-num" style="font-size:36px;">S2</div>
+          <p style="margin-top:4px;">7 senaryo arasından seçildi</p>
+        </div>
+        <div class="card card-b">
+          <h3>Persona</h3>
+          <p>Kalite Mühendisi — günlük hat takibi yapan, PPM ve iskarta maliyetini izleyen kullanıcı</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. SENTETİK VERİ -->
+  <div class="slide slide-mid">
+    <div class="slide-num">03 / 14</div>
+    <div class="tag">Adım 2 — Sentetik Veri</div>
+    <div class="divider"></div>
+    <h2>200 Satır Sentetik Veri Üretildi</h2>
+    <div class="two-col">
+      <div>
+        <p style="margin-bottom:20px;">Gerçek VALEO verisi kullanılmadı. Claude'a senaryo parametreleri verildi, <code>veri.csv</code> dosyası üretildi ve Claude Project'e Knowledge dosyası olarak yüklendi.</p>
+        <div class="cards cards-2" style="margin-top:8px;">
+          <div class="card card-b"><h3>Kolonlar</h3><p>Tarih · Parça No · Hat · Vardiya · Hata Tipi · Hata Adedi · Üretim Adedi · Iskarta ₺ · Tespit Aşaması</p></div>
+          <div class="card card-b"><h3>Dönem</h3><p>01.01.2024 – 15.07.2024<br>6.5 aylık üretim verisi</p></div>
+        </div>
+      </div>
+      <div class="stat-row" style="flex-direction:column; gap:10px; margin-top:0;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="card"><div class="stat-num" style="font-size:36px;">200</div><div class="stat-label">Satır</div></div>
+          <div class="card"><div class="stat-num" style="font-size:36px;">4</div><div class="stat-label">Üretim Hattı</div></div>
+          <div class="card"><div class="stat-num" style="font-size:36px;">7</div><div class="stat-label">Hata Tipi</div></div>
+          <div class="card"><div class="stat-num" style="font-size:36px;">4</div><div class="stat-label">Tespit Aşaması</div></div>
+        </div>
+        <div class="card card-g"><div class="stat-num" style="font-size:28px;">~39K PPM</div><p style="margin-top:4px;">Toplam iskarta: ~3.3M ₺</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. YÖNETİŞİM KURULUMU -->
+  <div class="slide slide-dark">
+    <div class="slide-num">04 / 14</div>
+    <div class="tag">Adım 3 — Yönetişim Katmanı</div>
+    <div class="divider"></div>
+    <h2>Claude Project Kurulumu</h2>
+    <div class="cards cards-3">
+      <div class="card card-g">
+        <h3>1. Claude Project Açıldı</h3>
+        <p>claude.ai → Projects → "Kalite Ödev Dosyası" projesi oluşturuldu. Tüm yönetişim bileşenleri bu proje altında toplandı. Her yeni sohbet otomatik olarak bu bağlamda açıldı.</p>
+      </div>
+      <div class="card card-g">
+        <h3>2. Kalıcı Talimat Yazıldı</h3>
+        <p>Project Instructions alanına <strong>10 kural</strong> yazıldı. Örnekler:</p>
+        <br>
+        <p><code>Veriyi koda gömme</code><br><code>Türkçe etiket kullan</code><br><code>₺ biçimi: 1.250.000 ₺</code><br><code>inline CSS yasak</code><br><code>Boş/hata/yükleme durumu zorunlu</code></p>
+      </div>
+      <div class="card card-g">
+        <h3>3. Knowledge Dosyası Yüklendi</h3>
+        <p><code>uretim-standardi.md</code> dosyası Project Knowledge'a yüklendi. Renk paleti, tipografi, 4 ekran anatomisi, grafik seçim kuralları burada. Sohbete yapıştırılmıyor — Claude ihtiyaç duyduğunda okuyor.</p>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <p style="font-size:14px; color:#7A8499;">Her yeni sohbette kurallar ve standart otomatik aktif — kullanıcının tekrar açıklamasına gerek yok.</p>
+    </div>
+  </div>
+
+  <!-- 5. GITHUB & CODE.GS -->
+  <div class="slide slide-mid">
+    <div class="slide-num">05 / 14</div>
+    <div class="tag">Adım 3 — Veri Bağlantısı</div>
+    <div class="divider"></div>
+    <h2>GitHub Kullanıldı — code.gs Neden Gerekmedi?</h2>
+    <div class="two-col">
+      <div>
+        <p style="margin-bottom:20px;">Tüm proje dosyaları <strong>GitHub reposunda</strong> tutuldu ve versiyon kontrolü sağlandı. Veri bağlantısı için ise farklı bir yol seçildi.</p>
+        <div class="card card-r" style="margin-bottom:16px;">
+          <h3 style="color:#EF4444;">code.gs nedir?</h3>
+          <p>Google Apps Script dosyasıdır. Google Sheets'teki veriyi dışarıya açan bir "kapıcı" görevi görür. Dashboard bu URL'ye fetch() yaparak canlı veri çeker.</p>
+        </div>
+        <div class="card card-r">
+          <h3 style="color:#EF4444;">Neden çalışmadı?</h3>
+          <p>VALEO kurumsal hesabı Apps Script dağıtımında "Anyone" erişimine izin vermiyor — sadece "Anyone within VALEO" seçeneği var. Dışarıdan bağlantı engellendi.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card card-g" style="margin-bottom:16px;">
+          <h3>Kullanılan Çözüm</h3>
+          <p><code>veri.csv</code> dosyası Claude Project'e <strong>Knowledge dosyası</strong> olarak yüklendi. Claude her sohbette bu dosyayı okudu — connector veya backend olmadan.</p>
+        </div>
+        <div class="card card-g">
+          <h3>Kanıt</h3>
+          <p>"Deformasyon hata tipinin toplam adedi kaç?" sorusuna Claude <strong>483</strong> dedi. CSV'de bağımsız kontrol: <strong>483</strong> ✅ Veri gerçekten okundu, hard-coded değil.</p>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="flow">
+            <div class="flow-box">veri.csv</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">Knowledge</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">Claude okur</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="border-color:#82E600; color:#82E600;">Dashboard</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. TUR A -->
+  <div class="slide slide-dark">
+    <div class="slide-num">06 / 14</div>
+    <div class="tag">Adım 4 — Tur A</div>
+    <div class="divider"></div>
+    <h2>Tur A — Donatımsız Oturum</h2>
+    <div class="two-col">
+      <div>
+        <p style="margin-bottom:20px;">Hiçbir yönetişim bileşeni aktif değil. Boş sohbet, Project yok, talimat yok, Knowledge yok. Aynı senaryo için dashboard istendi.</p>
+        <ul>
+          <li><div class="dot dot-r"></div>Veri koda gömüldü — 32 satır örnek veri, gerçek veri değil</li>
+          <li><div class="dot dot-r"></div>Inline CSS kullanıldı — standart dışı</li>
+          <li><div class="dot dot-r"></div>İngilizce/Türkçe karışık etiketler</li>
+          <li><div class="dot dot-r"></div>Para birimi biçimi tutarsız</li>
+          <li><div class="dot dot-r"></div>Boş veri durumu ele alınmadı</li>
+          <li><div class="dot dot-r"></div>Grafik seçimi standartsız</li>
+        </ul>
+      </div>
+      <div class="card card-r" style="padding:28px;">
+        <h3 style="color:#EF4444; font-size:18px; margin-bottom:16px;">Tur A Sonucu</h3>
+        <p style="font-size:16px; line-height:1.8;">Çıktı bir dashboard görünümüne sahip ama <strong>her şey şansa bağlı.</strong> Aynı promptu tekrar göndersen farklı bir çıktı gelir. Veri güncellense dashboard güncellenmez. Standart uygulanmamış.</p>
+        <br>
+        <p style="color:#EF4444; font-size:14px; margin-top:8px;">Bu tek seferlik bir başarıdır — sistem değil.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. TUR B -->
+  <div class="slide slide-mid">
+    <div class="slide-num">07 / 14</div>
+    <div class="tag">Adım 5 — Tur B</div>
+    <div class="divider"></div>
+    <h2>Tur B — Donatılmış Oturum</h2>
+    <div class="two-col">
+      <div>
+        <p style="margin-bottom:16px;">Project aktif, 10 kural geçerli, Knowledge yüklü, veri bağlı. <strong>Tek cümle prompt:</strong></p>
+        <div style="background:#16445F; border-radius:8px; padding:16px; margin-bottom:20px; border-left:3px solid #82E600;">
+          <code style="background:transparent; color:#F1F3F9; font-size:14px;">"veri.csv'deki veriyi oku, 4 ekranlı kalite dashboard'u üret."</code>
+        </div>
+        <ul>
+          <li><div class="dot"></div>Veri Knowledge'dan canlı okundu — koda gömülmedi</li>
+          <li><div class="dot"></div>Ayrı style.css üretildi — inline CSS yok</li>
+          <li><div class="dot"></div>Tüm etiketler Türkçe — otomatik</li>
+          <li><div class="dot"></div>₺ biçimi standarda uygun: 1.250.000 ₺</li>
+          <li><div class="dot"></div>Her ekranda boş/hata/yükleme durumu</li>
+          <li><div class="dot"></div>Renk = anlam: kırmızı kritik, yeşil iyi</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-g" style="margin-bottom:14px;">
+          <h3>Tur A vs Tur B — Tek Fark</h3>
+          <p>Prompt değişmedi. Araç değişmedi. Tek fark <strong>yönetişim katmanı.</strong> Aynı istek → Tur A'da tutarsız, Tur B'de her seferinde standart çıktı.</p>
+        </div>
+        <div class="card card-g">
+          <h3>Tekrarlanabilirlik</h3>
+          <p>Aynı prompt 2. kez gönderildi — aynı 4 ekran yapısı, aynı Türkçe etiketler, aynı standart geldi. Sistem kararlı.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. 4 EKRANLI DASHBOARD -->
+  <div class="slide slide-dark">
+    <div class="slide-num">08 / 14</div>
+    <div class="tag">Adım 5 — Dashboard Çıktısı</div>
+    <div class="divider"></div>
+    <h2>4 Ekranlı Dashboard</h2>
+    <div class="cards cards-4">
+      <div class="card card-b">
+        <h3>E1 — Özet KPI</h3>
+        <p>PPM · İlk Geçiş Verimi · Toplam Iskarta ₺ · Müşteri İade oranı</p>
+        <br><p style="color:#82E600; font-size:13px;">Renk = anlam · Kırmızı kritik · Yeşil iyi</p>
+      </div>
+      <div class="card card-b">
+        <h3>E2 — Trend Grafik</h3>
+        <p>Haftalık PPM çizgi grafiği · Aylık iskarta maliyet bar grafiği</p>
+        <br><p style="color:#82E600; font-size:13px;">İyileşiyor mu, kötüleşiyor mu?</p>
+      </div>
+      <div class="card card-b">
+        <h3>E3 — Pareto Analizi</h3>
+        <p>Hata tipi Pareto · Hat bazlı maliyet kırılımı · Halka grafik</p>
+        <br><p style="color:#82E600; font-size:13px;">En maliyetli hata tipi önce</p>
+      </div>
+      <div class="card card-b">
+        <h3>E4 — Detay Tablosu</h3>
+        <p>Filtrelenebilir kayıt tablosu · Hat / hata tipi / tespit aşaması filtresi</p>
+        <br><p style="color:#82E600; font-size:13px;">Durum sütunu · Sayfalama</p>
+      </div>
+    </div>
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+      <span class="badge">HTML + CSS + JS</span>
+      <span class="badge">200 satır veri gömülü</span>
+      <span class="badge">Tek dosya — offline çalışır</span>
+      <span class="badge">Koyu tema · #82E600 vurgu</span>
+      <span class="badge">Montserrat + Inter font</span>
+    </div>
+  </div>
+
+  <!-- 9. 6 DOĞRULAMA -->
+  <div class="slide slide-mid">
+    <div class="slide-num">09 / 14</div>
+    <div class="tag">Adım 6 — Doğrulama</div>
+    <div class="divider"></div>
+    <h2>6 Doğrulama Senaryosu — <span class="accent">6/6 ✅</span></h2>
+    <div class="scenario-grid">
+      <div class="scenario-box">
+        <div class="scenario-num">S1</div>
+        <h3>Tekrarlanabilirlik</h3>
+        <p>Tur B 2 kez üretildi. Her ikisinde de aynı 4 ekran, aynı Türkçe etiket, aynı standart. Anlamlı sapma yok. ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S2</div>
+        <h3>Boş / Bozuk Veri</h3>
+        <p>Sheet'teki tüm satırlar silindi. Dashboard çökmedi — her ekranda "Bu dönem için veri bulunmamaktadır" mesajı gösterildi. ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S3</div>
+        <h3>Kural İhlali Denemesi</h3>
+        <p>"Veriyi direkt HTML içine yaz" istendi. Kalıcı talimat devreye girdi — Claude veriyi Knowledge'dan okudu, hard-code yapmadı. ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S4</div>
+        <h3>Standart Uygulanışı</h3>
+        <p>"KPI panosu üret." — 2 kelime. Türkçe etiket, ₺ biçimi, renk sistemi, 6 KPI kartı otomatik geldi. ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S5</div>
+        <h3>Canlı Veri Okuma</h3>
+        <p>"Deformasyon hata tipinin toplam adedi?" → Claude: 483. CSV'de bağımsız kontrol: 483. Birebir eşleşti. ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S6</div>
+        <h3>Context Bütçesi</h3>
+        <p>Claude kendi bağlam yönetimi mimarisini açıkladı: Knowledge + kalıcı talimat + veri ayrımı. ✅</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. TASARIM SİSTEMİ -->
+  <div class="slide slide-dark">
+    <div class="slide-num">10 / 14</div>
+    <div class="tag">Adım 7 — Tasarım Sistemi</div>
+    <div class="divider"></div>
+    <h2>Renk & Tipografi Standardı Uygulandı</h2>
+    <div class="cards cards-3">
+      <div class="card card-g">
+        <h3>Renk Paleti</h3>
+        <p>renk.md dosyası Knowledge'a eklendi. Dashboard'a uygulandı:</p>
+        <br>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+          <div style="display:flex; align-items:center; gap:10px;"><div style="width:20px;height:20px;background:#82E600;border-radius:4px;flex-shrink:0;"></div><span style="font-size:13px; color:#D8DCE8;">#82E600 — Vurgu / Aktif</span></div>
+          <div style="display:flex; align-items:center; gap:10px;"><div style="width:20px;height:20px;background:#1D2433;border:1px solid #16445F;border-radius:4px;flex-shrink:0;"></div><span style="font-size:13px; color:#D8DCE8;">#1D2433 — Arka plan</span></div>
+          <div style="display:flex; align-items:center; gap:10px;"><div style="width:20px;height:20px;background:#16445F;border-radius:4px;flex-shrink:0;"></div><span style="font-size:13px; color:#D8DCE8;">#16445F — Kart / Sınır</span></div>
+          <div style="display:flex; align-items:center; gap:10px;"><div style="width:20px;height:20px;background:#F1F3F9;border-radius:4px;flex-shrink:0;"></div><span style="font-size:13px; color:#D8DCE8;">#F1F3F9 — Metin</span></div>
+        </div>
+      </div>
+      <div class="card card-g">
+        <h3>Tipografi</h3>
+        <p style="margin-bottom:12px;">İki font ailesi:</p>
+        <p style="font-family:'Montserrat',sans-serif; font-size:22px; font-weight:700; color:#F1F3F9; margin-bottom:8px;">Montserrat</p>
+        <p style="font-size:13px; margin-bottom:16px;">Başlıklar, KPI değerleri, sekme adları</p>
+        <p style="font-family:'Inter',sans-serif; font-size:16px; color:#D8DCE8; margin-bottom:8px;">Inter</p>
+        <p style="font-size:13px;">Gövde metni, etiketler, tablo içerikleri</p>
+      </div>
+      <div class="card card-g">
+        <h3>Skill Olarak Eklendi</h3>
+        <p style="margin-bottom:12px;"><code>talimatlar/renk.md</code> dosyası repoya eklendi ve Claude Project Knowledge'a yüklendi.</p>
+        <p style="margin-bottom:12px;">Artık her "dashboard üret" promptunda bu renk sistemi otomatik devreye giriyor — siz söylemeden.</p>
+        <p style="color:#82E600; font-size:13px;">Bu bir Rule değil — Knowledge (Skill) dosyasıdır. Emir değil, referans.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. RAPOR -->
+  <div class="slide slide-mid">
+    <div class="slide-num">11 / 14</div>
+    <div class="tag">Adım 8 — Rapor</div>
+    <div class="divider"></div>
+    <h2>Bölüm 8 Raporu Hazırlandı</h2>
+    <div class="two-col">
+      <div>
+        <p style="margin-bottom:20px;">Raporun içeriği Claude tarafından üretildi, Can Keçeci / After-Market bilgileri eklenerek tamamlandı. HTML + PDF + DOCX formatında teslim edildi.</p>
+        <ul>
+          <li><div class="dot"></div><strong>Kapak</strong> — Ad, ekip, senaryo, araç bilgileri</li>
+          <li><div class="dot"></div><strong>Senaryo & Persona</strong> — S2 detayı, 3 temel soru</li>
+          <li><div class="dot"></div><strong>Yönetişim Mimarisi</strong> — ASCII diyagram ile görselleştirildi</li>
+          <li><div class="dot"></div><strong>Context Bütçe Notu</strong> — Knowledge vs sohbete yapıştırma karşılaştırması</li>
+          <li><div class="dot"></div><strong>Tur A vs B Tablosu</strong> — Kriter bazlı karşılaştırma</li>
+          <li><div class="dot"></div><strong>En Etkili 5 Prompt</strong> — Kullanılan ve etkileri</li>
+          <li><div class="dot"></div><strong>2 Engel & Çözüm</strong> — fetch/CORS sorunu, Connector erişim sorunu</li>
+          <li><div class="dot"></div><strong>Öz-değerlendirme</strong> — Puanlama tablosu</li>
+        </ul>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="card card-g">
+          <h3>Formatlar</h3>
+          <p><code>rapor.html</code> — tarayıcıda açılır<br><code>rapor.pdf</code> — teslim için<br><code>rapor.docx</code> — düzenlenebilir</p>
+        </div>
+        <div class="card card-b">
+          <h3>Öz-değerlendirme Skoru</h3>
+          <p style="font-size:28px; font-family:'Montserrat',sans-serif; font-weight:800; color:#82E600; margin-top:8px;">47 / 50</p>
+          <p style="font-size:13px; margin-top:4px;">Eksik: ekran görüntüleri (−3)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. TESLİM -->
+  <div class="slide slide-dark">
+    <div class="slide-num">12 / 14</div>
+    <div class="tag">Adım 9 — Teslim</div>
+    <div class="divider"></div>
+    <h2>Teslim Hazırlandı</h2>
+    <div class="cards cards-3">
+      <div class="card card-g">
+        <h3>GitHub Reposu</h3>
+        <p>Tüm dosyalar <code>kececican/HomeworkCan</code> reposuna push edildi. Branch: <code>claude/upbeat-carson-qhyb09</code></p>
+        <br><p style="font-size:13px; color:#82E600;">Versiyon kontrolü · Commit geçmişi · Tüm değişiklikler kayıtlı</p>
+      </div>
+      <div class="card card-g">
+        <h3>Google Drive Klasörü</h3>
+        <p>GitHub'dan ZIP indirildi. Klasör yapısına göre dosyalar ayrıştırıldı ve Drive'a yüklendi.</p>
+        <br>
+        <p style="font-size:13px;"><code>dashboard/</code> · <code>transcripts/</code> · <code>talimatlar/</code> · <code>veri/</code> · <code>rapor/</code></p>
+      </div>
+      <div class="card card-g">
+        <h3>Sohbet Linkleri</h3>
+        <p>Tur A, Tur B ve Doğrulama oturumları claude.ai'den paylaşıldı. README'ye ve transcript dosyalarına eklendi.</p>
+        <br><p style="font-size:13px; color:#82E600;">Herkese açık (Anyone with the link)</p>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <p><strong>Teslim Dosya Yapısı:</strong></p>
+      <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="badge">README.md</span>
+        <span class="badge">rapor.pdf</span>
+        <span class="badge">veri.csv</span>
+        <span class="badge">kalici-talimat.md</span>
+        <span class="badge">uretim-standardi.md</span>
+        <span class="badge">cikti-A.html</span>
+        <span class="badge">cikti-B-standalone.html</span>
+        <span class="badge">tur-A.md</span>
+        <span class="badge">tur-B.md</span>
+        <span class="badge">dogrulama.md</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13. ÖĞRENILEN -->
+  <div class="slide slide-mid">
+    <div class="slide-num">13 / 14</div>
+    <div class="tag">Çıkarımlar</div>
+    <div class="divider"></div>
+    <h2>3 Temel Öğrenim</h2>
+    <ul style="max-width:800px;">
+      <li style="padding:18px 0; border-bottom:1px solid #16445F; align-items:flex-start;">
+        <div class="dot" style="margin-top:6px;"></div>
+        <div>
+          <p style="font-size:17px; color:#F1F3F9; font-weight:600; margin-bottom:6px;">Yönetişim = tekrarlanabilirlik</p>
+          <p>Talimat + Knowledge olmadan iyi çıktı şansa bağlı. Sistem kurulunca şans denklemden çıkıyor. Değerlendirilen çıktı değil — sistemi kurma disiplini.</p>
+        </div>
+      </li>
+      <li style="padding:18px 0; border-bottom:1px solid #16445F; align-items:flex-start;">
+        <div class="dot" style="margin-top:6px;"></div>
+        <div>
+          <p style="font-size:17px; color:#F1F3F9; font-weight:600; margin-bottom:6px;">Context bütçesi kurumsal önceliktir</p>
+          <p>Onlarca kişi aynı standardı sohbete yapıştırırsa token maliyeti katlanır, tutarsızlık artar. Knowledge katmanı hem maliyeti hem tutarsızlığı çözüyor.</p>
+        </div>
+      </li>
+      <li style="padding:18px 0; align-items:flex-start;">
+        <div class="dot" style="margin-top:6px;"></div>
+        <div>
+          <p style="font-size:17px; color:#F1F3F9; font-weight:600; margin-bottom:6px;">Engeller çözülür, atlanmaz</p>
+          <p>Connector ücretli → Knowledge dosyası çözümü. fetch() CORS hatası → standalone embed çözümü. VALEO domain kısıtı → alternatif yol. Her engel belgelendi.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 14. KAPANIS -->
+  <div class="slide slide-close">
+    <div class="slide-num">14 / 14</div>
+    <div class="tag">Teşekkürler</div>
+    <h1>Sistem kuruldu.<br><span class="accent">Standart</span><br>artık otomatik.</h1>
+    <div class="cover-meta" style="margin-top:40px;">
+      <div class="cover-meta-item"><label>Ad Soyad</label><span>Can Keçeci</span></div>
+      <div class="cover-meta-item"><label>Ekip</label><span>After-Market</span></div>
+      <div class="cover-meta-item"><label>Doğrulama</label><span style="color:#82E600;">6 / 6 ✅</span></div>
+      <div class="cover-meta-item"><label>Dashboard</label><span>4 Ekran · Tek Dosya</span></div>
+      <div class="cover-meta-item"><label>Teslim</label><span>18 Haziran 2026</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button id="prev" onclick="changeSlide(-1)" disabled>←</button>
+  <span id="slide-counter">1 / 14</span>
+  <button id="next" onclick="changeSlide(1)">→</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+
+  function changeSlide(dir) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, current + dir));
+    slides[current].classList.add('active');
+    document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === total - 1;
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+  });
+
+  document.getElementById('progress').style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>

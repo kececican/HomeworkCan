@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VALEO — Kalite & İskarta Takip Sistemi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg-primary: #0b0e14;
+    --bg-card: #111520;
+    --bg-card-hover: #161c2a;
+    --bg-surface: #1a2235;
+    --border: #222d42;
+    --border-subtle: #1a2235;
+    --accent-blue: #3b82f6;
+    --accent-amber: #f59e0b;
+    --accent-red: #ef4444;
+    --accent-green: #22c55e;
+    --accent-purple: #a855f7;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #4b5a72;
+    --valeo-blue: #005baa;
+    --valeo-blue-light: #0070cc;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    height: 60px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .valeo-logo {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .valeo-logo::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #005baa, #0070cc);
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .header-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-left: 1px solid var(--border);
+    padding-left: 16px;
+  }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .live-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--accent-green);
+    font-family: var(--font-mono);
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .timestamp { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 12px 28px 0;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    padding: 9px 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    bottom: -1px;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-btn:hover { color: var(--text-primary); background: var(--bg-surface); }
+  .tab-btn.active {
+    color: var(--accent-blue);
+    background: var(--bg-primary);
+    border-bottom: 2px solid var(--accent-blue);
+  }
+  .tab-icon { margin-right: 7px; font-size: 14px; }
+
+  /* ── FILTERS ── */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+  }
+  .filter-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 4px; }
+  .filter-select, .filter-input {
+    padding: 6px 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .filter-select:hover, .filter-input:hover { border-color: var(--accent-blue); }
+  .filter-select:focus, .filter-input:focus { border-color: var(--accent-blue); }
+  .filter-select option { background: var(--bg-surface); }
+  .filter-divider { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+  .btn-apply {
+    padding: 6px 16px;
+    background: var(--accent-blue);
+    border: none; border-radius: 6px;
+    color: #fff; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+  }
+  .btn-apply:hover { opacity: 0.85; }
+  .btn-reset {
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 12px; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-reset:hover { border-color: var(--accent-red); color: var(--accent-red); }
+
+  /* ── CONTENT ── */
+  .content { padding: 24px 28px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .kpi-card:hover { border-color: var(--accent-blue); transform: translateY(-1px); }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .kpi-card.red::before { background: var(--accent-red); }
+  .kpi-card.amber::before { background: var(--accent-amber); }
+  .kpi-card.blue::before { background: var(--accent-blue); }
+  .kpi-card.green::before { background: var(--accent-green); }
+  .kpi-card.purple::before { background: var(--accent-purple); }
+  .kpi-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .kpi-value {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .kpi-card.red .kpi-value { color: var(--accent-red); }
+  .kpi-card.amber .kpi-value { color: var(--accent-amber); }
+  .kpi-card.blue .kpi-value { color: var(--accent-blue); }
+  .kpi-card.green .kpi-value { color: var(--accent-green); }
+  .kpi-card.purple .kpi-value { color: var(--accent-purple); }
+  .kpi-delta {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .kpi-delta.up { color: var(--accent-red); }
+  .kpi-delta.down { color: var(--accent-green); }
+  .kpi-delta.neutral { color: var(--text-muted); }
+  .kpi-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── TWO COLUMN ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+  /* ── CHART CARD ── */
+  .chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    overflow: hidden;
+  }
+  .chart-card.full { grid-column: 1 / -1; }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .card-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  /* ── SVG CHARTS ── */
+  svg { display: block; width: 100%; overflow: visible; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-title { font-size: 13px; font-weight: 600; }
+  .table-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-sm:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+  .btn-sm.primary { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+  .btn-sm.primary:hover { opacity: 0.85; }
+  .search-input {
+    padding: 5px 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    width: 200px;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent-blue); }
+  .search-input::placeholder { color: var(--text-muted); }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--bg-surface); }
+  th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  th:hover { color: var(--text-primary); }
+  th .sort-icon { margin-left: 4px; opacity: 0.4; }
+  td {
+    padding: 9px 16px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: var(--bg-card-hover); }
+  .td-mono { font-family: var(--font-mono); font-size: 12px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .badge-red { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+  .badge-amber { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+  .badge-blue { background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.2); }
+  .badge-green { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+  .badge-purple { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid rgba(168,85,247,0.2); }
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .page-info { font-size: 11px; color: var(--text-muted); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .page-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+  .page-btn.active { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+  .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ── PARETO BAR ── */
+  .pareto-bar-track {
+    height: 6px;
+    background: var(--bg-surface);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .pareto-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--valeo-blue-light));
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .pareto-row {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .pareto-row:last-child { border-bottom: none; }
+  .pareto-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .pareto-name { font-size: 13px; font-weight: 500; }
+  .pareto-stats { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+  .pareto-cumulative { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── SPARK LINE ── */
+  .sparkline { display: flex; align-items: flex-end; gap: 2px; height: 32px; }
+  .spark-bar {
+    flex: 1;
+    background: var(--accent-blue);
+    border-radius: 2px 2px 0 0;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .spark-bar:hover { opacity: 1; }
+
+  /* ── ALERT BAND ── */
+  .alert-band {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 7px;
+    margin-bottom: 16px;
+    border: 1px solid;
+    font-size: 12px;
+  }
+  .alert-band.warning { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); color: var(--accent-amber); }
+  .alert-band.danger { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.25); color: var(--accent-red); }
+  .alert-band.info { background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.25); color: var(--accent-blue); }
+
+  /* ── HAT MATRIX ── */
+  .matrix-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    min-height: 80px;
+    transition: all 0.2s;
+  }
+  .matrix-cell:hover { border-color: var(--accent-blue); }
+  .matrix-cell .cell-val {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .matrix-cell .cell-label { font-size: 10px; color: var(--text-muted); text-align: center; }
+  .matrix-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* ── TOP ERROR SECTION ── */
+  .top-errors-list { display: flex; flex-direction: column; gap: 10px; }
+  .top-error-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--bg-surface);
+    border-radius: 7px;
+    border: 1px solid var(--border-subtle);
+    transition: border-color 0.2s;
+  }
+  .top-error-item:hover { border-color: var(--border); }
+  .error-rank {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .error-info { flex: 1; min-width: 0; }
+  .error-name { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+  .error-sub { font-size: 10px; color: var(--text-muted); }
+  .error-nums { text-align: right; flex-shrink: 0; }
+  .error-count { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+  .error-pct { font-size: 10px; color: var(--text-muted); }
+
+  /* ── VARDIYA ── */
+  .vardiya-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .vardiya-card {
+    padding: 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+  }
+  .vardiya-label { font-size: 10px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .vardiya-ppm { font-family: var(--font-mono); font-size: 22px; font-weight: 600; color: var(--accent-blue); }
+  .vardiya-sub { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  /* ── TABLE OVERFLOW ── */
+  .table-scroll { overflow-x: auto; }
+
+  /* ── EXPORT BAR ── */
+  .export-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+    .matrix-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="valeo-logo">VALEO</div>
+    <div class="header-subtitle">Kalite &amp; İskarta Takip Sistemi</div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div>CANLI</div>
+    <div class="timestamp" id="live-time">—</div>
+  </div>
+</header>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="switchScreen('kpi', this)">
+    <span class="tab-icon">◈</span>Özet KPI
+  </button>
+  <button class="tab-btn" onclick="switchScreen('trend', this)">
+    <span class="tab-icon">◎</span>Trend Grafik
+  </button>
+  <button class="tab-btn" onclick="switchScreen('pareto', this)">
+    <span class="tab-icon">▦</span>Pareto Analizi
+  </button>
+  <button class="tab-btn" onclick="switchScreen('detail', this)">
+    <span class="tab-icon">≡</span>Detay Tablosu
+  </button>
+</nav>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Filtre</span>
+  <select class="filter-select" id="f-hat">
+    <option value="">Tüm Hatlar</option>
+    <option>Hat-1</option><option>Hat-2</option><option>Hat-3</option><option>Hat-4</option>
+  </select>
+  <select class="filter-select" id="f-vardiya">
+    <option value="">Tüm Vardiyalar</option>
+    <option>Vardiya-1</option><option>Vardiya-2</option><option>Vardiya-3</option>
+  </select>
+  <select class="filter-select" id="f-hata">
+    <option value="">Tüm Hata Tipleri</option>
+    <option>Boyut Hatası</option><option>Deformasyon</option><option>Kaynak Hatası</option>
+    <option>Montaj Hatası</option><option>Yüzey Çizigi</option><option>Renk Hatası</option>
+    <option>Malzeme Hatası</option>
+  </select>
+  <select class="filter-select" id="f-tespit">
+    <option value="">Tüm Tespit Aşamaları</option>
+    <option>Süreç İçi</option><option>Final Kontrol</option><option>Müşteri İadesi</option>
+  </select>
+  <div class="filter-divider"></div>
+  <input type="date" class="filter-input" id="f-start" value="2024-01-01">
+  <span style="color:var(--text-muted);font-size:12px">—</span>
+  <input type="date" class="filter-input" id="f-end" value="2024-12-31">
+  <div class="filter-divider"></div>
+  <button class="btn-apply" onclick="applyFilters()">Uygula</button>
+  <button class="btn-reset" onclick="resetFilters()">Sıfırla</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+  <!-- ═══════════════════════════════════════════════════ SCREEN 1: KPI -->
+  <div class="screen active" id="screen-kpi">
+
+    <div class="alert-band danger">
+      ⚠ Hat-4 / Vardiya-3 — Müşteri iadesi oranı bu hafta %2.8 eşiğini aştı. Acil aksiyon gerekli.
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card red">
+        <div class="kpi-label">Toplam Hata Adedi</div>
+        <div class="kpi-value" id="kpi-hata">—</div>
+        <div class="kpi-delta up" id="kpi-hata-delta">↑ +12.4% geçen aya göre</div>
+        <div class="kpi-sub">Tüm hatlar · Tüm vardiyalar</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">İskarta Maliyeti (₺)</div>
+        <div class="kpi-value" id="kpi-maliyet">—</div>
+        <div class="kpi-delta up" id="kpi-maliyet-delta">↑ +8.1% geçen aya göre</div>
+        <div class="kpi-sub">Kümülatif · seçili dönem</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">PPM (Hata / Milyon)</div>
+        <div class="kpi-value" id="kpi-ppm">—</div>
+        <div class="kpi-delta down" id="kpi-ppm-delta">↓ −3.2% geçen aya göre</div>
+        <div class="kpi-sub">Parts Per Million</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Kalite Skoru (%)</div>
+        <div class="kpi-value" id="kpi-qlty">—</div>
+        <div class="kpi-delta neutral" id="kpi-qlty-delta">→ Hedef: %97.5</div>
+        <div class="kpi-sub">1 − iskarta oranı</div>
+      </div>
+    </div>
+
+    <!-- ROW 2 -->
+    <div class="kpi-grid">
+      <div class="kpi-card purple">
+        <div class="kpi-label">Toplam Üretim</div>
+        <div class="kpi-value" id="kpi-uretim">—</div>
+        <div class="kpi-delta neutral">Tüm hatlar</div>
+        <div class="kpi-sub">Seçili dönem toplamı</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Müşteri İadesi</div>
+        <div class="kpi-value" id="kpi-iade">—</div>
+        <div class="kpi-delta up">↑ Kritik seviye</div>
+        <div class="kpi-sub">Tespit = Müşteri İadesi</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">En Yüksek Hatalı Hat</div>
+        <div class="kpi-value" id="kpi-worst-hat">—</div>
+        <div class="kpi-delta neutral" id="kpi-worst-hat-sub">hata kaydı</div>
+        <div class="kpi-sub">Aksiyon önceliği</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">En Sık Hata Tipi</div>
+        <div class="kpi-value" style="font-size:18px;padding-top:4px" id="kpi-top-hata">—</div>
+        <div class="kpi-delta neutral" id="kpi-top-hata-sub">toplam hata</div>
+        <div class="kpi-sub">Pareto zirvesi</div>
+      </div>
+    </div>
+
+    <!-- HAT MATRIX -->
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Hat Bazlı Kalite Matrisi</div>
+          <div class="card-subtitle">PPM — Hata / Üretim bazlı</div>
+        </div>
+      </div>
+      <div class="matrix-grid" id="hat-matrix"><!-- js --></div>
+    </div>
+
+    <!-- VARDIYA -->
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Vardiya Karşılaştırması</div>
+            <div class="card-subtitle">PPM bazlı performans</div>
+          </div>
+        </div>
+        <div class="vardiya-grid" id="vardiya-cards"><!-- js --></div>
+      </div>
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Tespit Aşaması Dağılımı</div>
+            <div class="card-subtitle">Hata yakalanma noktası</div>
+          </div>
+        </div>
+        <svg viewBox="0 0 320 220" id="pie-chart"></svg>
+        <div class="legend" id="pie-legend"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ SCREEN 2: TREND -->
+  <div class="screen" id="screen-trend">
+    <div class="export-bar">
+      <button class="btn-sm" onclick="exportChart()">⬇ PNG İndir</button>
+    </div>
+    <div class="chart-card full" style="margin-bottom:16px">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Aylık Hata Adedi Trendi</div>
+          <div class="card-subtitle">Seçili dönem · Tüm hatlar</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-sm" id="trend-toggle-cost" onclick="toggleTrendLayer('cost', this)">Maliyet Katmanı</button>
+          <button class="btn-sm" id="trend-toggle-target" onclick="toggleTrendLayer('target', this)" style="color:var(--accent-amber)">Hedef Çizgisi</button>
+        </div>
+      </div>
+      <svg viewBox="0 0 900 300" id="line-chart"></svg>
+      <div class="legend" id="trend-legend"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Hat Bazlı Aylık Trend</div>
+            <div class="card-subtitle">Hat kırılımlı karşılaştırma</div>
+          </div>
+        </div>
+        <svg viewBox="0 0 440 260" id="hat-trend-chart"></svg>
+        <div class="legend" id="hat-trend-legend"></div>
+      </div>
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Hata Tipi Aylık Dağılımı</div>
+            <div class="card-subtitle">Yığın çubuk görünüm</div>
+          </div>
+        </div>
+        <svg viewBox="0 0 440 260" id="stack-chart"></svg>
+        <div class="legend" id="stack-legend"></div>
+      </div>
+    </div>
+
+    <div class="chart-card full">
+      <div class="card-header">
+        <div>
+          <div class="card-title">İskarta Maliyeti Trendi (₺)</div>
+          <div class="card-subtitle">Aylık kümülatif maliyet</div>
+        </div>
+        <div class="card-badge" id="cost-total-badge">—</div>
+      </div>
+      <svg viewBox="0 0 900 200" id="cost-chart"></svg>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ SCREEN 3: PARETO -->
+  <div class="screen" id="screen-pareto">
+    <div class="alert-band info">
+      ℹ  Pareto ilkesi: En üst 3 hata tipi toplam hatanın %80'inden fazlasını oluşturmaktadır. Kaynağa odaklanın.
+    </div>
+
+    <div class="two-col" style="margin-bottom:16px">
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Hata Tipi Pareto</div>
+            <div class="card-subtitle">Hata adedi + kümülatif %</div>
+          </div>
+        </div>
+        <svg viewBox="0 0 440 280" id="pareto-svg"></svg>
+      </div>
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Maliyet Bazlı Pareto</div>
+            <div class="card-subtitle">İskarta maliyeti (₺)</div>
+          </div>
+        </div>
+        <svg viewBox="0 0 440 280" id="pareto-cost-svg"></svg>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="card-header">
+          <div><div class="card-title">Hata Tipi Sıralaması</div><div class="card-subtitle">Adet · Maliyet · Oran</div></div>
+        </div>
+        <div id="pareto-list"><!-- js --></div>
+      </div>
+      <div class="chart-card">
+        <div class="card-header">
+          <div><div class="card-title">En Sık Hatalı Parçalar</div><div class="card-subtitle">Parça No bazlı</div></div>
+        </div>
+        <div id="pareto-parts-list"><!-- js --></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ SCREEN 4: DETAIL -->
+  <div class="screen" id="screen-detail">
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <div class="table-title">Kayıt Detayları <span class="card-badge" id="row-count-badge">— kayıt</span></div>
+        <div class="table-actions">
+          <input class="search-input" type="text" placeholder="Parça No, Hat, Hata Tipi ara…" id="table-search" oninput="filterTable()">
+          <select class="filter-select" id="t-sort" onchange="sortTable(this.value)" style="font-size:11px;padding:5px 10px">
+            <option value="">Sırala…</option>
+            <option value="date-asc">Tarih ↑</option>
+            <option value="date-desc">Tarih ↓</option>
+            <option value="cost-desc">Maliyet ↓</option>
+            <option value="hata-desc">Hata Adedi ↓</option>
+          </select>
+          <button class="btn-sm primary" onclick="exportCSV()">⬇ CSV İndir</button>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table id="main-table">
+          <thead>
+            <tr>
+              <th onclick="sortTable('date-asc')">Tarih <span class="sort-icon">⇅</span></th>
+              <th>Parça No</th>
+              <th>Hat</th>
+              <th>Vardiya</th>
+              <th>Hata Tipi</th>
+              <th onclick="sortTable('hata-desc')">Hata Adedi <span class="sort-icon">⇅</span></th>
+              <th>Üretim Adedi</th>
+              <th>PPM</th>
+              <th onclick="sortTable('cost-desc')">İskarta Maliyeti <span class="sort-icon">⇅</span></th>
+              <th>Tespit Aşaması</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"><!-- js --></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="page-info">— — —</div>
+        <div class="page-btns" id="page-btns"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ─────────────────────────────── DATA ─────────────────────────────── */
+const RAW_DATA = [
+  {tarih:'01.01.2024',parca:'VAL-009',hat:'Hat-4',vardiya:'Vardiya-1',hata:'Deformasyon',hataAdet:19,uretim:665,maliyet:14217.65,tespit:'Müşteri İadesi'},
+  {tarih:'01.01.2024',parca:'VAL-014',hat:'Hat-4',vardiya:'Vardiya-3',hata:'Boyut Hatası',hataAdet:17,uretim:392,maliyet:14050.54,tespit:'Müşteri İadesi'},
+  {tarih:'15.03.2024',parca:'VAL-005',hat:'Hat-2',vardiya:'Vardiya-2',hata:'Kaynak Hatası',hataAdet:12,uretim:450,maliyet:13200.00,tespit:'Final Kontrol'},
+  {tarih:'20.04.2024',parca:'VAL-011',hat:'Hat-1',vardiya:'Vardiya-1',hata:'Montaj Hatası',hataAdet:8,uretim:380,maliyet:7840.00,tespit:'Süreç İçi'},
+  {tarih:'05.02.2024',parca:'VAL-003',hat:'Hat-3',vardiya:'Vardiya-2',hata:'Boyut Hatası',hataAdet:22,uretim:510,maliyet:18150.00,tespit:'Final Kontrol'},
+  {tarih:'12.02.2024',parca:'VAL-007',hat:'Hat-1',vardiya:'Vardiya-3',hata:'Yüzey Çizigi',hataAdet:9,uretim:600,maliyet:6300.00,tespit:'Süreç İçi'},
+  {tarih:'28.02.2024',parca:'VAL-012',hat:'Hat-2',vardiya:'Vardiya-1',hata:'Deformasyon',hataAdet:15,uretim:480,maliyet:11250.00,tespit:'Müşteri İadesi'},
+  {tarih:'10.03.2024',parca:'VAL-002',hat:'Hat-4',vardiya:'Vardiya-2',hata:'Montaj Hatası',hataAdet:11,uretim:420,maliyet:9570.00,tespit:'Final Kontrol'},
+  {tarih:'22.03.2024',parca:'VAL-006',hat:'Hat-3',vardiya:'Vardiya-1',hata:'Kaynak Hatası',hataAdet:14,uretim:550,maliyet:12180.00,tespit:'Müşteri İadesi'},
+  {tarih:'05.04.2024',parca:'VAL-001',hat:'Hat-1',vardiya:'Vardiya-2',hata:'Boyut Hatası',hataAdet:20,uretim:475,maliyet:16500.00,tespit:'Final Kontrol'},
+  {tarih:'18.04.2024',parca:'VAL-008',hat:'Hat-2',vardiya:'Vardiya-3',hata:'Renk Hatası',hataAdet:6,uretim:640,maliyet:4200.00,tespit:'Süreç İçi'},
+  {tarih:'30.04.2024',parca:'VAL-015',hat:'Hat-4',vardiya:'Vardiya-1',hata:'Deformasyon',hataAdet:18,uretim:395,maliyet:13500.00,tespit:'Müşteri İadesi'},
+  {tarih:'08.05.2024',parca:'VAL-004',hat:'Hat-3',vardiya:'Vardiya-2',hata:'Malzeme Hatası',hataAdet:13,uretim:520,maliyet:10400.00,tespit:'Final Kontrol'},
+  {tarih:'20.05.2024',parca:'VAL-010',hat:'Hat-1',vardiya:'Vardiya-3',hata:'Boyut Hatası',hataAdet:16,uretim:430,maliyet:13200.00,tespit:'Müşteri İadesi'},
+  {tarih:'01.06.2024',parca:'VAL-013',hat:'Hat-2',vardiya:'Vardiya-1',hata:'Kaynak Hatası',hataAdet:10,uretim:490,maliyet:8700.00,tespit:'Süreç İçi'},
+  {tarih:'14.06.2024',parca:'VAL-009',hat:'Hat-4',vardiya:'Vardiya-2',hata:'Montaj Hatası',hataAdet:7,uretim:580,maliyet:6090.00,tespit:'Final Kontrol'},
+  {tarih:'25.06.2024',parca:'VAL-002',hat:'Hat-3',vardiya:'Vardiya-3',hata:'Deformasyon',hataAdet:21,uretim:410,maliyet:15750.00,tespit:'Müşteri İadesi'},
+  {tarih:'07.07.2024',parca:'VAL-006',hat:'Hat-1',vardiya:'Vardiya-1',hata:'Yüzey Çizigi',hataAdet:5,uretim:620,maliyet:3500.00,tespit:'Süreç İçi'},
+  {tarih:'19.07.2024',parca:'VAL-011',hat:'Hat-2',vardiya:'Vardiya-2',hata:'Boyut Hatası',hataAdet:23,uretim:455,maliyet:18975.00,tespit:'Müşteri İadesi'},
+  {tarih:'31.07.2024',parca:'VAL-014',hat:'Hat-4',vardiya:'Vardiya-3',hata:'Renk Hatası',hataAdet:8,uretim:500,maliyet:5600.00,tespit:'Final Kontrol'},
+  {tarih:'12.08.2024',parca:'VAL-003',hat:'Hat-3',vardiya:'Vardiya-1',hata:'Malzeme Hatası',hataAdet:11,uretim:535,maliyet:8800.00,tespit:'Süreç İçi'},
+  {tarih:'24.08.2024',parca:'VAL-007',hat:'Hat-1',vardiya:'Vardiya-2',hata:'Kaynak Hatası',hataAdet:15,uretim:445,maliyet:13050.00,tespit:'Müşteri İadesi'},
+  {tarih:'05.09.2024',parca:'VAL-012',hat:'Hat-2',vardiya:'Vardiya-3',hata:'Deformasyon',hataAdet:17,uretim:470,maliyet:12750.00,tespit:'Final Kontrol'},
+  {tarih:'17.09.2024',parca:'VAL-005',hat:'Hat-4',vardiya:'Vardiya-1',hata:'Montaj Hatası',hataAdet:9,uretim:555,maliyet:7830.00,tespit:'Süreç İçi'},
+  {tarih:'29.09.2024',parca:'VAL-001',hat:'Hat-3',vardiya:'Vardiya-2',hata:'Boyut Hatası',hataAdet:25,uretim:415,maliyet:20625.00,tespit:'Müşteri İadesi'},
+  {tarih:'10.10.2024',parca:'VAL-008',hat:'Hat-1',vardiya:'Vardiya-3',hata:'Yüzey Çizigi',hataAdet:6,uretim:590,maliyet:4200.00,tespit:'Final Kontrol'},
+  {tarih:'22.10.2024',parca:'VAL-015',hat:'Hat-2',vardiya:'Vardiya-1',hata:'Deformasyon',hataAdet:14,uretim:460,maliyet:10500.00,tespit:'Müşteri İadesi'},
+  {tarih:'03.11.2024',parca:'VAL-010',hat:'Hat-4',vardiya:'Vardiya-2',hata:'Kaynak Hatası',hataAdet:12,uretim:520,maliyet:10440.00,tespit:'Süreç İçi'},
+  {tarih:'15.11.2024',parca:'VAL-004',hat:'Hat-3',vardiya:'Vardiya-3',hata:'Montaj Hatası',hataAdet:10,uretim:440,maliyet:8700.00,tespit:'Final Kontrol'},
+  {tarih:'27.11.2024',parca:'VAL-013',hat:'Hat-1',vardiya:'Vardiya-1',hata:'Boyut Hatası',hataAdet:19,uretim:470,maliyet:15675.00,tespit:'Müşteri İadesi'},
+  {tarih:'09.12.2024',parca:'VAL-006',hat:'Hat-2',vardiya:'Vardiya-2',hata:'Malzeme Hatası',hataAdet:8,uretim:510,maliyet:6400.00,tespit:'Süreç İçi'},
+  {tarih:'21.12.2024',parca:'VAL-009',hat:'Hat-4',vardiya:'Vardiya-3',hata:'Deformasyon',hataAdet:20,uretim:400,maliyet:15000.00,tespit:'Müşteri İadesi'},
+];
+
+/* ─────────────────────── STATE ─────────────────────── */
+let activeData = [...RAW_DATA];
+let currentPage = 1;
+const PAGE_SIZE = 10;
+let showCostLayer = false;
+let showTargetLayer = true;
+
+/* ─────────────────────── UTILS ─────────────────────── */
+const parseDate = d => { const [dd,mm,yy] = d.split('.'); return new Date(+yy,+mm-1,+dd); };
+const monthKey = d => { const dt = parseDate(d); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`; };
+const monthLabel = k => { const [y,m] = k.split('-'); const months=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara']; return months[+m-1]+' '+y.slice(2); };
+const fmt = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'K' : String(n);
+const fmtTL = n => '₺'+n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const COLORS = ['#3b82f6','#ef4444','#f59e0b','#22c55e','#a855f7','#06b6d4','#f97316','#ec4899'];
+const HAT_COLORS = {'Hat-1':'#3b82f6','Hat-2':'#22c55e','Hat-3':'#f59e0b','Hat-4':'#ef4444'};
+
+function aggregate(data, key) {
+  const map = {};
+  data.forEach(r => {
+    const k = r[key]; if(!map[k]) map[k]={count:0,maliyet:0,uretim:0}; 
+    map[k].count += r.hataAdet; map[k].maliyet += r.maliyet; map[k].uretim += r.uretim;
+  });
+  return map;
+}
+
+/* ─────────────────────── SCREEN SWITCH ─────────────────────── */
+function switchScreen(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='trend') renderTrend();
+  if(id==='pareto') renderPareto();
+  if(id==='detail') renderTable();
+}
+
+/* ─────────────────────── FILTERS ─────────────────────── */
+function applyFilters() {
+  const hat = document.getElementById('f-hat').value;
+  const vardiya = document.getElementById('f-vardiya').value;
+  const hata = document.getElementById('f-hata').value;
+  const tespit = document.getElementById('f-tespit').value;
+  const start = document.getElementById('f-start').value;
+  const end = document.getElementById('f-end').value;
+  activeData = RAW_DATA.filter(r => {
+    if(hat && r.hat !== hat) return false;
+    if(vardiya && r.vardiya !== vardiya) return false;
+    if(hata && r.hata !== hata) return false;
+    if(tespit && r.tespit !== tespit) return false;
+    if(start || end) {
+      const dt = parseDate(r.tarih);
+      if(start && dt < new Date(start)) return false;
+      if(end && dt > new Date(end)) return false;
+    }
+    return true;
+  });
+  currentPage = 1;
+  renderAll();
+}
+function resetFilters() {
+  ['f-hat','f-vardiya','f-hata','f-tespit'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('f-start').value='2024-01-01';
+  document.getElementById('f-end').value='2024-12-31';
+  activeData = [...RAW_DATA];
+  currentPage = 1;
+  renderAll();
+}
+
+/* ─────────────────────── KPI ─────────────────────── */
+function renderKPI() {
+  const data = activeData;
+  const totalHata = data.reduce((s,r) => s+r.hataAdet, 0);
+  const totalMaliyet = data.reduce((s,r) => s+r.maliyet, 0);
+  const totalUretim = data.reduce((s,r) => s+r.uretim, 0);
+  const ppm = totalUretim ? Math.round(totalHata/totalUretim*1e6) : 0;
+  const qScore = totalUretim ? ((1 - totalHata/totalUretim)*100).toFixed(2) : '0';
+  const iadeCount = data.filter(r=>r.tespit==='Müşteri İadesi').reduce((s,r)=>s+r.hataAdet,0);
+
+  const hatMap = aggregate(data,'hat');
+  let worstHat='—', worstCount=0;
+  Object.entries(hatMap).forEach(([h,v]) => { if(v.count>worstCount){worstCount=v.count;worstHat=h;} });
+
+  const htMap = aggregate(data,'hata');
+  let topHata='—', topHataCount=0;
+  Object.entries(htMap).forEach(([h,v]) => { if(v.count>topHataCount){topHataCount=v.count;topHata=h;} });
+
+  document.getElementById('kpi-hata').textContent = totalHata.toLocaleString('tr-TR');
+  document.getElementById('kpi-maliyet').textContent = fmtTL(totalMaliyet);
+  document.getElementById('kpi-ppm').textContent = ppm.toLocaleString('tr-TR');
+  document.getElementById('kpi-qlty').textContent = qScore+'%';
+  document.getElementById('kpi-uretim').textContent = totalUretim.toLocaleString('tr-TR');
+  document.getElementById('kpi-iade').textContent = iadeCount.toLocaleString('tr-TR');
+  document.getElementById('kpi-worst-hat').textContent = worstHat;
+  document.getElementById('kpi-worst-hat-sub').textContent = worstCount.toLocaleString('tr-TR')+' hata';
+  document.getElementById('kpi-top-hata').textContent = topHata;
+  document.getElementById('kpi-top-hata-sub').textContent = topHataCount.toLocaleString('tr-TR')+' adet hata';
+
+  /* Hat Matrix */
+  const hats = ['Hat-1','Hat-2','Hat-3','Hat-4'];
+  const matrix = document.getElementById('hat-matrix');
+  matrix.innerHTML = hats.map(h => {
+    const v = hatMap[h] || {count:0,maliyet:0,uretim:0};
+    const ppmH = v.uretim ? Math.round(v.count/v.uretim*1e6) : 0;
+    const color = ppmH > 25000 ? '#ef4444' : ppmH > 15000 ? '#f59e0b' : '#22c55e';
+    return `<div class="matrix-cell"><div class="cell-val" style="color:${color}">${ppmH.toLocaleString('tr-TR')}</div><div class="cell-label">${h}<br>PPM</div></div>`;
+  }).join('');
+
+  /* Vardiya */
+  const varMap = aggregate(data,'vardiya');
+  const vc = document.getElementById('vardiya-cards');
+  vc.innerHTML = ['Vardiya-1','Vardiya-2','Vardiya-3'].map(v => {
+    const val = varMap[v]||{count:0,uretim:0,maliyet:0};
+    const ppmV = val.uretim ? Math.round(val.count/val.uretim*1e6) : 0;
+    return `<div class="vardiya-card"><div class="vardiya-label">${v}</div><div class="vardiya-ppm">${ppmV.toLocaleString('tr-TR')}</div><div class="vardiya-sub">PPM</div></div>`;
+  }).join('');
+
+  /* Pie */
+  renderPie(data);
+}
+
+function renderPie(data) {
+  const tMap = aggregate(data,'tespit');
+  const entries = Object.entries(tMap).sort((a,b)=>b[1].count-a[1].count);
+  const total = entries.reduce((s,[,v])=>s+v.count,0);
+  const colors = ['#ef4444','#f59e0b','#22c55e'];
+  const svg = document.getElementById('pie-chart');
+  const legend = document.getElementById('pie-legend');
+  if(!entries.length) { svg.innerHTML=''; return; }
+  let cum = 0;
+  const cx=160, cy=105, r=80;
+  let paths = '';
+  entries.forEach(([label,{count}],i) => {
+    const startAngle = cum/total*2*Math.PI - Math.PI/2;
+    cum += count;
+    const endAngle = cum/total*2*Math.PI - Math.PI/2;
+    const x1=cx+r*Math.cos(startAngle), y1=cy+r*Math.sin(startAngle);
+    const x2=cx+r*Math.cos(endAngle), y2=cy+r*Math.sin(endAngle);
+    const large = count/total > 0.5 ? 1 : 0;
+    const mid = (startAngle+endAngle)/2;
+    const lx=cx+(r+22)*Math.cos(mid), ly=cy+(r+22)*Math.sin(mid);
+    paths += `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${colors[i]}" opacity="0.85"/>`;
+    if(count/total > 0.06) paths += `<text x="${lx}" y="${ly}" fill="#e2e8f0" font-size="9" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono">${Math.round(count/total*100)}%</text>`;
+  });
+  svg.innerHTML = paths;
+  legend.innerHTML = entries.map(([label],i) => `<div class="legend-item"><div class="legend-dot" style="background:${colors[i]}"></div>${label}</div>`).join('');
+}
+
+/* ─────────────────────── TREND ─────────────────────── */
+function renderTrend() {
+  const data = activeData;
+  const months = [...new Set(data.map(r=>monthKey(r.tarih)))].sort();
+  if(!months.length) return;
+
+  /* LINE CHART */
+  const monthTotals = months.map(m => ({
+    label: monthLabel(m),
+    count: data.filter(r=>monthKey(r.tarih)===m).reduce((s,r)=>s+r.hataAdet,0),
+    cost: data.filter(r=>monthKey(r.tarih)===m).reduce((s,r)=>s+r.maliyet,0),
+  }));
+  const maxCount = Math.max(...monthTotals.map(m=>m.count),1);
+  const W=900,H=260,padL=50,padR=20,padT=20,padB=40;
+  const iW=W-padL-padR, iH=H-padT-padB;
+  const n=monthTotals.length;
+  const x=i=>(n<=1?iW/2:i/(n-1)*iW)+padL;
+  const y=v=>padT+iH-(v/maxCount*iH);
+  const pts = monthTotals.map((m,i)=>`${x(i)},${y(m.count)}`).join(' ');
+  let g = '';
+  // grid
+  [0,0.25,0.5,0.75,1].forEach(t => {
+    const yy=padT+iH*(1-t);
+    g+=`<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#222d42" stroke-dasharray="3,3"/>`;
+    g+=`<text x="${padL-6}" y="${yy+4}" fill="#4b5a72" font-size="9" text-anchor="end" font-family="JetBrains Mono">${Math.round(maxCount*t)}</text>`;
+  });
+  // area fill
+  const areaPath=`M ${x(0)} ${padT+iH} ${monthTotals.map((m,i)=>`L ${x(i)} ${y(m.count)}`).join(' ')} L ${x(n-1)} ${padT+iH} Z`;
+  g+=`<defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35"/><stop offset="100%" stop-color="#3b82f6" stop-opacity="0.02"/></linearGradient></defs>`;
+  g+=`<path d="${areaPath}" fill="url(#areaGrad)"/>`;
+  g+=`<polyline points="${pts}" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  // target line
+  if(showTargetLayer) {
+    const targetCount=15; const ty=y(targetCount);
+    g+=`<line x1="${padL}" y1="${ty}" x2="${W-padR}" y2="${ty}" stroke="#f59e0b" stroke-dasharray="5,3" stroke-width="1.5"/>`;
+    g+=`<text x="${W-padR-4}" y="${ty-5}" fill="#f59e0b" font-size="9" text-anchor="end" font-family="JetBrains Mono">Hedef</text>`;
+  }
+  // dots + labels
+  monthTotals.forEach((m,i) => {
+    g+=`<circle cx="${x(i)}" cy="${y(m.count)}" r="4" fill="#3b82f6" stroke="#0b0e14" stroke-width="1.5"/>`;
+    g+=`<text x="${x(i)}" y="${padT+iH+18}" fill="#4b5a72" font-size="8" text-anchor="middle" font-family="JetBrains Mono">${m.label}</text>`;
+  });
+  document.getElementById('line-chart').innerHTML = g;
+
+  /* HAT TREND */
+  const hats=['Hat-1','Hat-2','Hat-3','Hat-4'];
+  let hg='';
+  const maxH=Math.max(...hats.flatMap(h=>months.map(m=>data.filter(r=>r.hat===h&&monthKey(r.tarih)===m).reduce((s,r)=>s+r.hataAdet,0))),1);
+  const W2=440,H2=220,pL=40,pR=10,pT=15,pB=35; const iW2=W2-pL-pR,iH2=H2-pT-pB;
+  [0,0.5,1].forEach(t => {
+    const yy=pT+iH2*(1-t);
+    hg+=`<line x1="${pL}" y1="${yy}" x2="${W2-pR}" y2="${yy}" stroke="#222d42" stroke-dasharray="2,2"/>`;
+    hg+=`<text x="${pL-4}" y="${yy+3}" fill="#4b5a72" font-size="8" text-anchor="end" font-family="JetBrains Mono">${Math.round(maxH*t)}</text>`;
+  });
+  hats.forEach((h,hi) => {
+    const pts2=months.map((m,i) => {
+      const v=data.filter(r=>r.hat===h&&monthKey(r.tarih)===m).reduce((s,r)=>s+r.hataAdet,0);
+      const xp=(n<=1?iW2/2:i/(n-1)*iW2)+pL, yp=pT+iH2-(v/maxH*iH2);
+      return `${xp},${yp}`;
+    }).join(' ');
+    hg+=`<polyline points="${pts2}" fill="none" stroke="${HAT_COLORS[h]}" stroke-width="2" stroke-linejoin="round"/>`;
+  });
+  months.forEach((m,i) => {
+    const xp=(n<=1?iW2/2:i/(n-1)*iW2)+pL;
+    hg+=`<text x="${xp}" y="${pT+iH2+15}" fill="#4b5a72" font-size="7" text-anchor="middle" font-family="JetBrains Mono">${monthLabel(m)}</text>`;
+  });
+  document.getElementById('hat-trend-chart').innerHTML=hg;
+  document.getElementById('hat-trend-legend').innerHTML=hats.map(h=>`<div class="legend-item"><div class="legend-dot" style="background:${HAT_COLORS[h]}"></div>${h}</div>`).join('');
+
+  /* STACK CHART */
+  const htypes=[...new Set(data.map(r=>r.hata))];
+  const maxStack=Math.max(...months.map(m=>data.filter(r=>monthKey(r.tarih)===m).reduce((s,r)=>s+r.hataAdet,0)),1);
+  let sg='';
+  const bw=Math.min(30, iW2/(n+1));
+  months.forEach((m,mi) => {
+    const xp=(n<=1?iW2/2:mi/(n-1)*iW2)+pL-bw/2;
+    let cumH=0;
+    htypes.forEach((ht,hi) => {
+      const v=data.filter(r=>r.hata===ht&&monthKey(r.tarih)===m).reduce((s,r)=>s+r.hataAdet,0);
+      const barH=v/maxStack*iH2;
+      sg+=`<rect x="${xp}" y="${pT+iH2-cumH-barH}" width="${bw}" height="${barH}" fill="${COLORS[hi%COLORS.length]}" opacity="0.8" rx="1"/>`;
+      cumH+=barH;
+    });
+    sg+=`<text x="${xp+bw/2}" y="${pT+iH2+15}" fill="#4b5a72" font-size="7" text-anchor="middle" font-family="JetBrains Mono">${monthLabel(m)}</text>`;
+  });
+  [0,0.5,1].forEach(t => {
+    const yy=pT+iH2*(1-t);
+    sg+=`<line x1="${pL}" y1="${yy}" x2="${W2-pR}" y2="${yy}" stroke="#222d42" stroke-dasharray="2,2"/>`;
+    sg+=`<text x="${pL-4}" y="${yy+3}" fill="#4b5a72" font-size="8" text-anchor="end" font-family="JetBrains Mono">${Math.round(maxStack*t)}</text>`;
+  });
+  document.getElementById('stack-chart').innerHTML=sg;
+  document.getElementById('stack-legend').innerHTML=htypes.map((h,i)=>`<div class="legend-item"><div class="legend-dot" style="background:${COLORS[i%COLORS.length]}"></div>${h}</div>`).join('');
+
+  /* COST CHART */
+  const maxCost=Math.max(...monthTotals.map(m=>m.cost),1);
+  let cg='';
+  const W3=900,H3=160,pT3=10,pB3=30; const iH3=H3-pT3-pB3;
+  const bw3=Math.min(50,(iW/(n+1)));
+  monthTotals.forEach((m,i) => {
+    const xp=x(i)-bw3/2;
+    const bh=m.cost/maxCost*iH3;
+    cg+=`<rect x="${xp}" y="${pT3+iH3-bh}" width="${bw3}" height="${bh}" fill="#0070cc" opacity="0.75" rx="2"/>`;
+    cg+=`<text x="${x(i)}" y="${pT3+iH3+18}" fill="#4b5a72" font-size="8" text-anchor="middle" font-family="JetBrains Mono">${m.label}</text>`;
+    if(bh>14) cg+=`<text x="${x(i)}" y="${pT3+iH3-bh-4}" fill="#94a3b8" font-size="7" text-anchor="middle" font-family="JetBrains Mono">${(m.cost/1000).toFixed(0)}K</text>`;
+  });
+  document.getElementById('cost-chart').innerHTML=cg;
+  const totalCost=monthTotals.reduce((s,m)=>s+m.cost,0);
+  document.getElementById('cost-total-badge').textContent=fmtTL(totalCost)+' toplam';
+}
+
+function toggleTrendLayer(l, btn) {
+  if(l==='cost') { showCostLayer=!showCostLayer; btn.style.color=showCostLayer?'var(--accent-blue)':'var(--text-secondary)'; }
+  if(l==='target') { showTargetLayer=!showTargetLayer; btn.style.color=showTargetLayer?'var(--accent-amber)':'var(--text-secondary)'; }
+  renderTrend();
+}
+
+/* ─────────────────────── PARETO ─────────────────────── */
+function renderPareto() {
+  const data = activeData;
+  const htMap = aggregate(data,'hata');
+  const sorted = Object.entries(htMap).sort((a,b)=>b[1].count-a[1].count);
+  const totalH = sorted.reduce((s,[,v])=>s+v.count,0);
+  const sortedCost = [...sorted].sort((a,b)=>b[1].maliyet-a[1].maliyet);
+  const totalC = sorted.reduce((s,[,v])=>s+v.maliyet,0);
+
+  /* Pareto SVG helper */
+  function drawPareto(svgId, items, valueKey, total, colorKey='#3b82f6') {
+    const svg = document.getElementById(svgId);
+    if(!items.length){svg.innerHTML='';return;}
+    const W=440,H=240,pL=50,pR=50,pT=15,pB=40;
+    const iW=W-pL-pR,iH=H-pT-pB;
+    const bw=iW/items.length;
+    const maxV=items[0][1][valueKey];
+    let g='',cum=0;
+    // axes
+    g+=`<line x1="${pL}" y1="${pT}" x2="${pL}" y2="${pT+iH}" stroke="#222d42"/>`;
+    g+=`<line x1="${pL}" y1="${pT+iH}" x2="${W-pR}" y2="${pT+iH}" stroke="#222d42"/>`;
+    g+=`<line x1="${W-pR}" y1="${pT}" x2="${W-pR}" y2="${pT+iH}" stroke="#222d42" stroke-dasharray="2,2"/>`;
+    // % ticks
+    [0,25,50,75,100].forEach(t => {
+      const yy=pT+iH*(1-t/100);
+      g+=`<text x="${W-pR+4}" y="${yy+3}" fill="#4b5a72" font-size="8" font-family="JetBrains Mono">${t}%</text>`;
+    });
+    const cumPts=[];
+    items.forEach(([label,vals],i) => {
+      const v=vals[valueKey];
+      const bh=v/maxV*iH;
+      const bx=pL+i*bw+2, by=pT+iH-bh;
+      g+=`<rect x="${bx}" y="${by}" width="${bw-4}" height="${bh}" fill="${COLORS[i%COLORS.length]}" opacity="0.8" rx="2"/>`;
+      g+=`<text x="${bx+(bw-4)/2}" y="${pT+iH+16}" fill="#4b5a72" font-size="8" text-anchor="middle" font-family="JetBrains Mono">${label.substring(0,8)}</text>`;
+      cum+=v;
+      const cp=(cum/total)*100;
+      cumPts.push(`${pL+(i+0.5)*bw},${pT+iH*(1-cp/100)}`);
+    });
+    if(cumPts.length>1) g+=`<polyline points="${cumPts.join(' ')}" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/>`;
+    cumPts.forEach((p,i)=>{
+      const [cx2,cy2]=p.split(',');
+      g+=`<circle cx="${cx2}" cy="${cy2}" r="3" fill="#f59e0b" stroke="#0b0e14" stroke-width="1"/>`;
+    });
+    // 80% line
+    const y80=pT+iH*0.2;
+    g+=`<line x1="${pL}" y1="${y80}" x2="${W-pR}" y2="${y80}" stroke="#ef4444" stroke-dasharray="4,3" stroke-width="1.2"/>`;
+    g+=`<text x="${pL+4}" y="${y80-4}" fill="#ef4444" font-size="8" font-family="JetBrains Mono">80%</text>`;
+    svg.innerHTML=g;
+  }
+
+  drawPareto('pareto-svg', sorted, 'count', totalH);
+  drawPareto('pareto-cost-svg', sortedCost, 'maliyet', totalC);
+
+  /* Pareto list */
+  let cumPct=0;
+  document.getElementById('pareto-list').innerHTML = sorted.map(([label,{count,maliyet}],i) => {
+    const pct=totalH?count/totalH*100:0; cumPct+=pct;
+    const color=COLORS[i%COLORS.length];
+    const w=Math.round(pct);
+    return `<div class="pareto-row">
+      <div class="pareto-meta"><span class="pareto-name">${label}</span><span class="pareto-stats">${count} adet · ${fmtTL(maliyet)}</span></div>
+      <div class="pareto-bar-track"><div class="pareto-bar-fill" style="width:${w}%;background:${color}"></div></div>
+      <div class="pareto-cumulative">Kümülatif: %${cumPct.toFixed(1)}</div>
+    </div>`;
+  }).join('');
+
+  /* Parts pareto */
+  const partsMap = aggregate(data,'parca');
+  const sortedParts = Object.entries(partsMap).sort((a,b)=>b[1].count-a[1].count).slice(0,8);
+  const totalP = sortedParts.reduce((s,[,v])=>s+v.count,0);
+  let cumP=0;
+  document.getElementById('pareto-parts-list').innerHTML = sortedParts.map(([parca,{count,maliyet}],i) => {
+    const pct=totalP?count/totalP*100:0; cumP+=pct;
+    return `<div class="pareto-row">
+      <div class="pareto-meta"><span class="pareto-name">${parca}</span><span class="pareto-stats">${count} adet · ${fmtTL(maliyet)}</span></div>
+      <div class="pareto-bar-track"><div class="pareto-bar-fill" style="width:${Math.round(pct)}%;background:${COLORS[i%COLORS.length]}"></div></div>
+      <div class="pareto-cumulative">Kümülatif: %${cumP.toFixed(1)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ─────────────────────── TABLE ─────────────────────── */
+let tableData = [...RAW_DATA];
+function renderTable() {
+  const search = document.getElementById('table-search').value.toLowerCase();
+  tableData = activeData.filter(r =>
+    (r.parca+r.hat+r.hata+r.vardiya+r.tespit).toLowerCase().includes(search)
+  );
+  document.getElementById('row-count-badge').textContent = tableData.length+' kayıt';
+  renderPage();
+}
+function renderPage() {
+  const start=(currentPage-1)*PAGE_SIZE, end=Math.min(start+PAGE_SIZE,tableData.length);
+  const BADGE = {
+    'Müşteri İadesi':'badge-red','Final Kontrol':'badge-amber','Süreç İçi':'badge-green',
+    'Boyut Hatası':'badge-blue','Deformasyon':'badge-red','Kaynak Hatası':'badge-amber',
+    'Montaj Hatası':'badge-purple','Yüzey Çizigi':'badge-green','Renk Hatası':'badge-blue','Malzeme Hatası':'badge-purple'
+  };
+  const rows = tableData.slice(start,end).map(r => {
+    const ppm=r.uretim?Math.round(r.hataAdet/r.uretim*1e6):0;
+    const hatBadge=`<span class="badge ${BADGE[r.hata]||'badge-blue'}">${r.hata}</span>`;
+    const tBadge=`<span class="badge ${BADGE[r.tespit]||'badge-green'}">${r.tespit}</span>`;
+    return `<tr>
+      <td class="td-mono">${r.tarih}</td>
+      <td class="td-mono" style="color:var(--accent-blue)">${r.parca}</td>
+      <td>${r.hat}</td>
+      <td>${r.vardiya}</td>
+      <td>${hatBadge}</td>
+      <td class="td-mono" style="color:var(--accent-amber);font-weight:600">${r.hataAdet}</td>
+      <td class="td-mono">${r.uretim.toLocaleString('tr-TR')}</td>
+      <td class="td-mono">${ppm.toLocaleString('tr-TR')}</td>
+      <td class="td-mono" style="color:var(--accent-red)">${fmtTL(r.maliyet)}</td>
+      <td>${tBadge}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('table-body').innerHTML = rows || '<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:24px">Kayıt bulunamadı</td></tr>';
+  const totalPages=Math.ceil(tableData.length/PAGE_SIZE);
+  document.getElementById('page-info').textContent=`${start+1}–${end} / ${tableData.length} kayıt`;
+  const btns=document.getElementById('page-btns');
+  btns.innerHTML=`<button class="page-btn" onclick="gotoPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>‹</button>`;
+  for(let p=1;p<=totalPages;p++) btns.innerHTML+=`<button class="page-btn ${p===currentPage?'active':''}" onclick="gotoPage(${p})">${p}</button>`;
+  btns.innerHTML+=`<button class="page-btn" onclick="gotoPage(${currentPage+1})" ${currentPage>=totalPages?'disabled':''}>›</button>`;
+}
+function gotoPage(p) { const tp=Math.ceil(tableData.length/PAGE_SIZE); if(p<1||p>tp)return; currentPage=p; renderPage(); }
+function filterTable() { currentPage=1; renderTable(); }
+function sortTable(mode) {
+  if(mode==='date-asc') tableData.sort((a,b)=>parseDate(a.tarih)-parseDate(b.tarih));
+  if(mode==='date-desc') tableData.sort((a,b)=>parseDate(b.tarih)-parseDate(a.tarih));
+  if(mode==='cost-desc') tableData.sort((a,b)=>b.maliyet-a.maliyet);
+  if(mode==='hata-desc') tableData.sort((a,b)=>b.hataAdet-a.hataAdet);
+  currentPage=1; renderPage();
+}
+function exportCSV() {
+  const header=['Tarih','Parça No','Hat','Vardiya','Hata Tipi','Hata Adedi','Üretim Adedi','İskarta Maliyeti (₺)','Tespit Aşaması'];
+  const rows=tableData.map(r=>[r.tarih,r.parca,r.hat,r.vardiya,r.hata,r.hataAdet,r.uretim,r.maliyet.toFixed(2),r.tespit].join(','));
+  const csv='\uFEFF'+[header.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='valeo_kalite_raporu.csv'; a.click();
+}
+
+/* ─────────────────────── ALL ─────────────────────── */
+function renderAll() {
+  renderKPI();
+  const active = document.querySelector('.screen.active');
+  if(active && active.id==='screen-trend') renderTrend();
+  if(active && active.id==='screen-pareto') renderPareto();
+  if(active && active.id==='screen-detail') renderTable();
+}
+
+/* ─────────────────────── CLOCK ─────────────────────── */
+function updateClock() {
+  const now=new Date();
+  document.getElementById('live-time').textContent=now.toLocaleString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock,1000); updateClock();
+
+/* INIT */
+renderAll();
+</script>
+</body>
+</html>

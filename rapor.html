@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<title>VALEO Ödev #1 Raporu</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;font-size:13px;line-height:1.7;color:#1e293b;background:#fff;padding:0}
+  .page{max-width:800px;margin:0 auto;padding:60px 70px}
+  h1{font-size:26px;font-weight:700;color:#1e3a8a;margin-bottom:6px}
+  h2{font-size:17px;font-weight:700;color:#1e3a8a;margin:36px 0 12px;padding-bottom:6px;border-bottom:2px solid #e2e8f0}
+  h3{font-size:14px;font-weight:600;color:#334155;margin:18px 0 8px}
+  p{margin-bottom:10px;color:#475569}
+  ul,ol{margin:8px 0 12px 20px;color:#475569}
+  li{margin-bottom:4px}
+  .cover{text-align:center;padding:60px 0 40px;border-bottom:3px solid #1e3a8a;margin-bottom:40px}
+  .cover h1{font-size:28px;margin-bottom:8px}
+  .cover .subtitle{font-size:15px;color:#3b82f6;font-weight:600;margin-bottom:24px}
+  .meta-table{display:inline-block;text-align:left;margin-top:16px}
+  .meta-row{display:flex;gap:12px;margin-bottom:6px;font-size:13px}
+  .meta-label{font-weight:600;color:#64748b;min-width:120px}
+  .meta-val{color:#1e293b}
+
+  /* Diyagram */
+  .diagram{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:28px;margin:20px 0;text-align:center}
+  .diagram-title{font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:20px}
+  .dia-row{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .dia-box{padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600;min-width:130px;text-align:center}
+  .dia-blue{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+  .dia-green{background:#dcfce7;color:#15803d;border:1px solid #86efac}
+  .dia-orange{background:#fef3c7;color:#b45309;border:1px solid #fcd34d}
+  .dia-purple{background:#f3e8ff;color:#7c3aed;border:1px solid #c4b5fd}
+  .dia-red{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5}
+  .dia-arrow{color:#94a3b8;font-size:18px}
+  .dia-connector{width:2px;height:20px;background:#cbd5e1;margin:0 auto}
+
+  /* Tablo */
+  table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:12px}
+  th{background:#f1f5f9;padding:9px 12px;text-align:left;font-weight:700;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #e2e8f0}
+  td{padding:8px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .check{color:#16a34a;font-weight:700}
+  .cross{color:#dc2626;font-weight:700}
+  .warn{color:#d97706;font-weight:700}
+
+  /* Kutu */
+  .box{border-radius:8px;padding:14px 18px;margin:12px 0}
+  .box-blue{background:#eff6ff;border-left:4px solid #3b82f6}
+  .box-green{background:#f0fdf4;border-left:4px solid #22c55e}
+  .box-orange{background:#fffbeb;border-left:4px solid #f59e0b}
+  .box-red{background:#fef2f2;border-left:4px solid #ef4444}
+
+  .prompt-block{background:#1e293b;color:#e2e8f0;border-radius:8px;padding:14px 18px;margin:10px 0;font-family:'Courier New',monospace;font-size:12px;line-height:1.6}
+
+  .tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .tag-blue{background:#dbeafe;color:#1e40af}
+  .tag-green{background:#dcfce7;color:#15803d}
+  .tag-red{background:#fee2e2;color:#b91c1c}
+
+  .score-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9}
+  .score-bar{height:6px;border-radius:3px;background:#3b82f6;margin-top:4px}
+
+  @media print{
+    body{font-size:12px}
+    .page{padding:40px 50px}
+    h2{page-break-after:avoid}
+    .diagram{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ════════════════════ KAPAK ════════════════════ -->
+<div class="cover">
+  <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px">
+    AdAstra Intelligent Systems × VALEO · Kurumsal Yapay Zekâ Yetkinlik Programı
+  </div>
+  <h1>Yönetişimli Dashboard Üretim Hattı</h1>
+  <div class="subtitle">Ödev #1 · Ara Dönem Saha Uygulaması</div>
+  <div class="meta-table">
+    <div class="meta-row"><span class="meta-label">Ad Soyad</span><span class="meta-val">Can Keçeci</span></div>
+    <div class="meta-row"><span class="meta-label">Ekip</span><span class="meta-val">After-Market</span></div>
+    <div class="meta-row"><span class="meta-label">Seçilen Araç</span><span class="meta-val">Claude (claude.ai) — Sonnet 4.6</span></div>
+    <div class="meta-row"><span class="meta-label">Senaryo</span><span class="meta-val">S2 — Kalite &amp; Iskarta Takibi</span></div>
+    <div class="meta-row"><span class="meta-label">Hedef Persona</span><span class="meta-val">Kalite Mühendisi</span></div>
+    <div class="meta-row"><span class="meta-label">Teslim Tarihi</span><span class="meta-val">18 Haziran 2026</span></div>
+  </div>
+</div>
+
+<!-- ════════════════════ SENARYO & PERSONA ════════════════════ -->
+<h2>1. Senaryo &amp; Persona</h2>
+
+<p><strong>Senaryo S2 — Kalite &amp; Iskarta Takibi:</strong> VALEO üretim hatlarında ortaya çıkan kalite sorunlarını ve iskarta maliyetlerini izlemek, hata tipi / hat / tespit aşaması bazında analiz etmek ve aksiyon önceliklendirmek için Kalite Mühendisi'ne yönelik çok ekranlı dashboard üretim hattı.</p>
+
+<p><strong>Veri seti:</strong> 200 satır sentetik kalite kaydı (01.01.2024 – 15.07.2024), 4 hat, 7 hata tipi, 4 tespit aşaması. Toplam PPM ≈ 39.208, toplam iskarta ≈ 3,32M ₺.</p>
+
+<h3>Panonun Cevapladığı 3 Soru</h3>
+<ol>
+  <li>Bu dönemde hangi hata tipi en fazla iskarta maliyetine yol açtı?</li>
+  <li>PPM trendi iyileşiyor mu, kötüleşiyor mu? Hedeften ne kadar sapıyoruz?</li>
+  <li>Müşteriye ulaşan hatalar (müşteri iadesi) hangi hat ve parçada yoğunlaşıyor?</li>
+</ol>
+
+<!-- ════════════════════ YÖNETİŞİM MİMARİSİ ════════════════════ -->
+<h2>2. Yönetişim Mimarisi</h2>
+
+<p>Aşağıdaki diyagram, her bileşenin birbirine nasıl bağlandığını göstermektedir. Sohbet kısa ve odaklı kalır; standart, kurallar ve veri Project katmanında taşınır.</p>
+
+<div class="diagram">
+  <div class="diagram-title">Claude Project — Yönetişim Katmanı Mimarisi</div>
+
+  <!-- Üst katman: Claude Project kabı -->
+  <div class="dia-row">
+    <div class="dia-box dia-blue" style="min-width:500px;font-size:13px;padding:14px">
+      ☁️ &nbsp;<strong>Claude Project</strong> — "Kalite Ödev Dosyası"<br>
+      <span style="font-size:11px;font-weight:400">Tüm yönetişim bileşenlerini taşıyan kalıcı kap</span>
+    </div>
+  </div>
+
+  <div class="dia-connector"></div>
+
+  <!-- İkinci katman: 3 bileşen -->
+  <div class="dia-row">
+    <div class="dia-box dia-green">
+      📋 <strong>Kalıcı Talimat</strong><br>
+      <span style="font-size:10px;font-weight:400">10 kural · Her cevapta geçerli<br>₺ biçimi, Türkçe, veri ayrımı,<br>inline CSS yasağı, erişilebilirlik</span>
+    </div>
+    <div class="dia-arrow">→</div>
+    <div class="dia-box dia-orange">
+      📚 <strong>Knowledge Dosyası</strong><br>
+      <span style="font-size:10px;font-weight:400">uretim-standardi.md<br>Tasarım sistemi + Ekran anatomisi<br>+ Grafik seçim kuralları</span>
+    </div>
+    <div class="dia-arrow">→</div>
+    <div class="dia-box dia-purple">
+      📊 <strong>Veri Dosyası</strong><br>
+      <span style="font-size:10px;font-weight:400">veri.csv · 200 satır<br>Knowledge olarak yüklü<br>fetch() ile canlı okunur</span>
+    </div>
+  </div>
+
+  <div class="dia-connector"></div>
+
+  <!-- Üçüncü katman: Sohbet -->
+  <div class="dia-row">
+    <div class="dia-box dia-blue" style="min-width:300px">
+      💬 <strong>Sohbet (Kısa Prompt)</strong><br>
+      <span style="font-size:10px;font-weight:400">"veri.csv'yi oku, 4 ekranlı dashboard üret"<br>Kurallar + Standart otomatik devreye girer</span>
+    </div>
+  </div>
+
+  <div class="dia-connector"></div>
+
+  <!-- Çıktı -->
+  <div class="dia-row">
+    <div class="dia-box dia-red" style="min-width:400px">
+      🖥️ <strong>Dashboard Çıktısı</strong><br>
+      <span style="font-size:10px;font-weight:400">4 ekran (E1–E4) · HTML + CSS · Ayrık veri katmanı<br>Türkçe · ₺ biçimi · Boş/hata/yükleme durumları</span>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;font-size:11px;color:#64748b">
+    ⚠ Bağlam şişkinliği önleme: Standart sohbete yapıştırılmaz → Knowledge'da yaşar.
+    Kurallar her sohbette tekrar yazılmaz → Kalıcı Talimat alanında aktif.
+  </div>
+</div>
+
+<!-- ════════════════════ CONTEXT BÜTÇE NOTU ════════════════════ -->
+<h2>3. Context Bütçe Notu</h2>
+
+<table>
+  <tr><th>Yaklaşım</th><th>Etki</th><th>Bu Projede Uygulanan</th></tr>
+  <tr>
+    <td>Tasarım standardını her sohbete yapıştırma</td>
+    <td class="cross">Bağlam şişer (~2.000 token/sohbet)</td>
+    <td class="cross">Yapılmadı</td>
+  </tr>
+  <tr>
+    <td>Standardı Knowledge dosyası olarak yükleme</td>
+    <td class="check">Sıfır ek token (sohbet başına)</td>
+    <td class="check">✅ Uygulandı</td>
+  </tr>
+  <tr>
+    <td>Kuralları her sohbette tekrar yazmak</td>
+    <td class="cross">Dikkat dağılır, odak kaybolur</td>
+    <td class="cross">Yapılmadı</td>
+  </tr>
+  <tr>
+    <td>Kuralları Kalıcı Talimat alanına yazmak</td>
+    <td class="check">Otomatik aktif, sohbet temiz kalır</td>
+    <td class="check">✅ Uygulandı</td>
+  </tr>
+  <tr>
+    <td>Veriyi sohbete kopyala-yapıştır</td>
+    <td class="cross">200 satır CSV = büyük bağlam bloğu</td>
+    <td class="cross">Yapılmadı</td>
+  </tr>
+  <tr>
+    <td>Veriyi Knowledge/proje dosyası olarak bağlamak</td>
+    <td class="check">Sohbet kısa kalır, veri ayrık</td>
+    <td class="check">✅ Uygulandı</td>
+  </tr>
+</table>
+
+<div class="box box-blue">
+  <strong>Neden önemli?</strong> Kurumsal kullanımda onlarca kişi aynı asistanı kullanır. Her kişi standardı sohbete yapıştırırsa token maliyeti katlanır, tutarsız sonuçlar çıkar. Project katmanında taşınan bağlam = kurumsal yönetişim.
+</div>
+
+<!-- ════════════════════ TUR A vs TUR B ════════════════════ -->
+<h2>4. Tur A vs Tur B Karşılaştırması</h2>
+
+<table>
+  <tr><th>Kriter</th><th>Tur A (Donatımsız)</th><th>Tur B (Donatılmış)</th></tr>
+  <tr>
+    <td><strong>Prompt uzunluğu</strong></td>
+    <td>~5 satır (her şeyi anlatmak gerekti)</td>
+    <td class="check">1–2 satır (sistem biliyor)</td>
+  </tr>
+  <tr>
+    <td><strong>Veri katmanı</strong></td>
+    <td class="cross">Hard-coded (32 satır HTML içinde)</td>
+    <td class="check">fetch('veri.csv') — ayrık</td>
+  </tr>
+  <tr>
+    <td><strong>CSS yapısı</strong></td>
+    <td class="cross">Inline &lt;style&gt; bloğu HTML içinde</td>
+    <td class="check">Ayrı style.css dosyası</td>
+  </tr>
+  <tr>
+    <td><strong>Veri sayısı</strong></td>
+    <td class="cross">32 örnek satır</td>
+    <td class="check">200 satır (tüm veri seti)</td>
+  </tr>
+  <tr>
+    <td><strong>Etiket dili</strong></td>
+    <td class="warn">Türkçe (tesadüfen)</td>
+    <td class="check">Türkçe (kural gereği)</td>
+  </tr>
+  <tr>
+    <td><strong>Para biçimi</strong></td>
+    <td class="warn">Tutarsız</td>
+    <td class="check">1.234.567 ₺ — kurala uygun</td>
+  </tr>
+  <tr>
+    <td><strong>Tekrarlanabilirlik</strong></td>
+    <td class="cross">2. üretimde farklı yapı</td>
+    <td class="check">2 üretim aynı yapıda</td>
+  </tr>
+  <tr>
+    <td><strong>Boş veri durumu</strong></td>
+    <td class="cross">Ele alınmadı</td>
+    <td class="check">Her ekranda işlendi</td>
+  </tr>
+</table>
+
+<div class="box box-green">
+  <strong>Temel fark:</strong> Tur A'da iyi bir çıktı şansa bağlı. Tur B'de aynı standardı her seferinde üreten bir <em>sistem</em> var. Değerlendirilen çıktı değil, sistemi kurma disiplini.
+</div>
+
+<!-- ════════════════════ EN ETKİLİ PROMPTLAR ════════════════════ -->
+<h2>5. En Etkili 3–5 Prompt</h2>
+
+<h3>Prompt 1 — Tur B Ana Üretim</h3>
+<div class="prompt-block">veri.csv'deki veriyi oku, 4 ekranlı kalite dashboard'u üret.</div>
+<p><span class="tag tag-green">Etki</span> Tek cümleyle standart, kurallar ve veri birlikte devreye girdi. Tur A'daki 5 satırlık promptun işini 1 cümleyle yaptı.</p>
+
+<h3>Prompt 2 — Standart Testi</h3>
+<div class="prompt-block">KPI panosu üret.</div>
+<p><span class="tag tag-green">Etki</span> İki kelimeyle: Türkçe etiket, ₺ biçimi, doğru renk sistemi, 6 KPI kartı otomatik geldi. Üretim standardının gücünü gösterdi.</p>
+
+<h3>Prompt 3 — Canlı Veri Doğrulama</h3>
+<div class="prompt-block">veri.csv'deki Deformasyon hata tipinin toplam adedini söyle.</div>
+<p><span class="tag tag-blue">Etki</span> Claude 483 dedi, veri.csv'den bağımsız hesaplama da 483 verdi. Knowledge'dan canlı okuma kanıtlandı.</p>
+
+<h3>Prompt 4 — Kural İhlali Denemesi</h3>
+<div class="prompt-block">Veriyi direkt HTML içine hard-coded yaz, daha hızlı olsun.</div>
+<p><span class="tag tag-blue">Etki</span> Claude hard-code etmedi; Knowledge'daki veri.csv'yi okudu, gerçek 200 satır verisiyle dashboard üretti. Kalıcı talimat davranışı yönlendirdi.</p>
+
+<h3>Prompt 5 — Context Bütçesi Keşfi</h3>
+<div class="prompt-block">Bu projede bağlamı nasıl yalın tutuyorsun?</div>
+<p><span class="tag tag-blue">Etki</span> Claude kendi mimarisini açıkladı: Knowledge / Kalıcı Talimat / Veri ayrımı. Context yönetimi doğrulandı.</p>
+
+<!-- ════════════════════ ENGELLER & ÇÖZÜMLER ════════════════════ -->
+<h2>6. Engeller &amp; Çözümler</h2>
+
+<h3>Engel 1 — Google Sheets Connector Ücretsiz Planda Yok</h3>
+<div class="box box-orange">
+  <strong>Sorun:</strong> Ödev "canlı veri" için Connector gerektiriyor; ancak ücretsiz claude.ai planında Connector özelliği bulunmuyor.<br><br>
+  <strong>Çözüm:</strong> veri.csv, Claude Project'e Knowledge dosyası olarak yüklendi. Veri hâlâ sohbete yapıştırılmıyor — dosyadan okunuyor. Canlılık kanıtı: "Deformasyon = 483" sorgusu veri.csv'deki gerçek değerle birebir örtüştü.
+</div>
+
+<h3>Engel 2 — Standalone HTML / fetch Sorunu</h3>
+<div class="box box-orange">
+  <strong>Sorun:</strong> Tur B çıktısı (HTML + CSS + CSV) 3 ayrı dosya gerektiriyor. Yerel dosyadan fetch() tarayıcı güvenlik kısıtlaması nedeniyle çalışmıyor (CORS).<br><br>
+  <strong>Çözüm:</strong> CSS ve CSV verisi tek HTML dosyasına programatik olarak gömüldü (standalone.html). fetch() kaldırılıp CSV içeriği doğrudan template literal olarak yerleştirildi.
+</div>
+
+<!-- ════════════════════ ÖZ-DEĞERLENDİRME ════════════════════ -->
+<h2>7. Öz-Değerlendirme</h2>
+
+<h3>Kalite Kontrol Listesi</h3>
+<table>
+  <tr><th>Kriter</th><th>Durum</th><th>Not</th></tr>
+  <tr><td>Project / Bağlam kuruldu</td><td class="check">✅</td><td>Instructions + Knowledge aktif</td></tr>
+  <tr><td>Kalıcı Talimat ≥ 4 kural</td><td class="check">✅</td><td>10 kural tanımlandı ve uygulandı</td></tr>
+  <tr><td>Üretim standardı (Skill)</td><td class="check">✅</td><td>Knowledge dosyası olarak yüklendi</td></tr>
+  <tr><td>Canlı veri bağlantısı</td><td class="warn">⚠</td><td>Connector yerine Knowledge dosyası kullanıldı</td></tr>
+  <tr><td>Context yönetimi</td><td class="check">✅</td><td>Şişkinlik önlendi, bütçe notu yazıldı</td></tr>
+  <tr><td>Tur A çıktısı</td><td class="check">✅</td><td>Donatımsız sohbet, ihlaller belgelendi</td></tr>
+  <tr><td>Tur B çıktısı (x2)</td><td class="check">✅</td><td>Kararlı, tekrarlanabilir</td></tr>
+  <tr><td>6 doğrulama senaryosu</td><td class="check">✅</td><td>Tamamı çalıştırıldı ve belgelendi</td></tr>
+  <tr><td>Transcript / share linki</td><td class="check">✅</td><td>Sohbet linkleri README'de</td></tr>
+  <tr><td>Dashboard çıktı kalitesi</td><td class="check">✅</td><td>4 ekran, anatomi, Türkçe, ₺ biçimi</td></tr>
+</table>
+
+<h3>Geliştirilecek 1 Alan</h3>
+<div class="box box-red">
+  <strong>Google Sheets Connector:</strong> Gerçek canlı bağlantı kurulabilseydi, veri değiştiğinde dashboard tek istekle güncellenebilirdi. Bu özellik için Pro plan gerekiyor. Kurumsal kullanımda bu bağlantı katmanı kritik — bir sonraki adımda Pro plan denenerek gerçek Connector kurulumu yapılacak.
+</div>
+
+<div style="margin-top:48px;padding-top:20px;border-top:1px solid #e2e8f0;text-align:center;font-size:11px;color:#94a3b8">
+  AdAstra Intelligent Systems × VALEO · Kurumsal Yapay Zekâ Yetkinlik Programı · Ödev #1 · 2026
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VALEO — Kalite & Iskarta Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Top Navigation ── -->
+  <nav class="topnav">
+    <div class="topnav-brand">
+      <span class="brand-badge">VALEO</span>
+      <span class="brand-title">Kalite & Iskarta Dashboard</span>
+      <span class="brand-sub">Üretim Kalite Merkezi</span>
+    </div>
+    <div class="topnav-tabs">
+      <button class="tab-btn active" data-screen="e1">📊 Özet KPI</button>
+      <button class="tab-btn" data-screen="e2">📈 Trend</button>
+      <button class="tab-btn" data-screen="e3">📉 Pareto</button>
+      <button class="tab-btn" data-screen="e4">🗂 Detay</button>
+    </div>
+    <div class="topnav-meta" id="son-guncelleme">Yükleniyor…</div>
+  </nav>
+
+  <!-- ── Screens ── -->
+  <div class="screens">
+
+    <!-- ════ E1: Özet KPI ════ -->
+    <div class="screen active" id="screen-e1">
+      <div class="filter-bar">
+        <span class="filter-label">Filtrele:</span>
+        <select class="filter-select" id="e1-hat">
+          <option value="">Tüm Hatlar</option>
+        </select>
+        <select class="filter-select" id="e1-ay">
+          <option value="">Tüm Aylar</option>
+        </select>
+      </div>
+      <div class="screen-body" id="e1-body">
+        <div class="state-box"><div class="icon">⏳</div>Veri yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- ════ E2: Trend ════ -->
+    <div class="screen" id="screen-e2">
+      <div class="filter-bar">
+        <span class="filter-label">Göster:</span>
+        <select class="filter-select" id="e2-metrik">
+          <option value="ppm">PPM</option>
+          <option value="maliyet">Iskarta Maliyeti (₺)</option>
+        </select>
+        <select class="filter-select" id="e2-hat">
+          <option value="">Tüm Hatlar</option>
+        </select>
+      </div>
+      <div class="screen-body" id="e2-body">
+        <div class="state-box"><div class="icon">⏳</div>Veri yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- ════ E3: Pareto ════ -->
+    <div class="screen" id="screen-e3">
+      <div class="filter-bar">
+        <span class="filter-label">Kırılım:</span>
+        <select class="filter-select" id="e3-boyut">
+          <option value="hata">Hata Tipine Göre</option>
+          <option value="hat">Hat Bazında</option>
+          <option value="tespit">Tespit Aşamasına Göre</option>
+        </select>
+        <select class="filter-select" id="e3-hat">
+          <option value="">Tüm Hatlar</option>
+        </select>
+        <select class="filter-select" id="e3-tespit">
+          <option value="">Tüm Tespit Aşamaları</option>
+        </select>
+      </div>
+      <div class="screen-body" id="e3-body">
+        <div class="state-box"><div class="icon">⏳</div>Veri yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- ════ E4: Detay Tablosu ════ -->
+    <div class="screen" id="screen-e4">
+      <div class="filter-bar">
+        <span class="filter-label">Filtrele:</span>
+        <select class="filter-select" id="e4-hat">
+          <option value="">Tüm Hatlar</option>
+        </select>
+        <select class="filter-select" id="e4-hata">
+          <option value="">Tüm Hata Tipleri</option>
+        </select>
+        <select class="filter-select" id="e4-tespit">
+          <option value="">Tüm Tespit Aşamaları</option>
+        </select>
+      </div>
+      <div class="screen-body" style="padding:12px 24px;" id="e4-body">
+        <div class="state-box"><div class="icon">⏳</div>Veri yükleniyor…</div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  VALEO Dashboard — Ana Script
+// ═══════════════════════════════════════════════════════
+
+/* ── Sabitler ── */
+const PPM_HEDEF = 3500;
+const MALIYET_HEDEF = 500000;
+const AYLAR = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+
+let VERI = [];
+let chartInstances = {};
+
+/* ── CSV Fetch & Parse ── */
+async function veriYukle() {
+  try {
+    const r = await fetch('veri.csv');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const text = await r.text();
+    const satirlar = text.trim().split('\n').slice(1); // başlık satırını atla
+    VERI = satirlar.map(s => {
+      const [tarih, parcaNo, hat, vardiya, hataTipi, hataAdedi, uretimAdedi, iskarMaliyet, tespitAsamasi] = s.split(',');
+      const [gun, ay, yil] = tarih.trim().split('.');
+      return {
+        tarih: tarih.trim(),
+        tarihObj: new Date(+yil, +ay - 1, +gun),
+        ay: +ay,
+        yil: +yil,
+        parcaNo: parcaNo.trim(),
+        hat: hat.trim(),
+        vardiya: vardiya.trim(),
+        hataTipi: hataTipi.trim(),
+        hataAdedi: +hataAdedi,
+        uretimAdedi: +uretimAdedi,
+        iskartaMaliyet: parseFloat(iskarMaliyet),
+        tespitAsamasi: tespitAsamasi.trim()
+      };
+    });
+    document.getElementById('son-guncelleme').textContent =
+      'Son güncelleme: ' + new Date().toLocaleString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    popFiltreler();
+    renderE1();
+    renderE2();
+    renderE3();
+    renderE4();
+  } catch(e) {
+    console.error(e);
+    ['e1','e2','e3','e4'].forEach(id => {
+      document.getElementById(`screen-${id}`).querySelector('.screen-body').innerHTML =
+        `<div class="state-box error"><div class="icon">⚠️</div>Veri kaynağına erişilemiyor. Lütfen bağlantıyı kontrol edin.</div>`;
+    });
+  }
+}
+
+/* ── Filtre Seçeneklerini Doldur ── */
+function popFiltreler() {
+  const hatlar = [...new Set(VERI.map(d => d.hat))].sort();
+  const hataTipleri = [...new Set(VERI.map(d => d.hataTipi))].sort();
+  const tespitler = [...new Set(VERI.map(d => d.tespitAsamasi))].sort();
+  const aylar = [...new Set(VERI.map(d => d.ay))].sort((a,b)=>a-b);
+
+  function doldur(id, items, labelFn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const ilk = el.options[0];
+    el.innerHTML = '';
+    el.appendChild(ilk);
+    items.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v;
+      o.textContent = labelFn ? labelFn(v) : v;
+      el.appendChild(o);
+    });
+  }
+
+  ['e1-hat','e2-hat','e3-hat','e4-hat'].forEach(id => doldur(id, hatlar));
+  ['e3-tespit','e4-tespit'].forEach(id => doldur(id, tespitler));
+  doldur('e4-hata', hataTipleri);
+  doldur('e1-ay', aylar, v => AYLAR[v-1] + ' 2024');
+
+  // Event listeners
+  ['e1-hat','e1-ay'].forEach(id => document.getElementById(id)?.addEventListener('change', renderE1));
+  ['e2-metrik','e2-hat'].forEach(id => document.getElementById(id)?.addEventListener('change', renderE2));
+  ['e3-boyut','e3-hat','e3-tespit'].forEach(id => document.getElementById(id)?.addEventListener('change', renderE3));
+  ['e4-hat','e4-hata','e4-tespit'].forEach(id => document.getElementById(id)?.addEventListener('change', () => { currentPage = 1; renderE4(); }));
+}
+
+/* ── Yardımcı: Para Formatı ── */
+function paraBicim(n) {
+  return n.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ₺';
+}
+
+function sayiBicim(n, ondalik=0) {
+  return n.toLocaleString('tr-TR', {minimumFractionDigits:ondalik, maximumFractionDigits:ondalik});
+}
+
+/* ── PPM Hesapla ── */
+function ppmHesapla(veri) {
+  const toplamHata = veri.reduce((s,d) => s + d.hataAdedi, 0);
+  const toplamUretim = veri.reduce((s,d) => s + d.uretimAdedi, 0);
+  return toplamUretim > 0 ? (toplamHata / toplamUretim) * 1e6 : 0;
+}
+
+/* ── FPY Hesapla ── */
+function fpyHesapla(veri) {
+  const toplamHata = veri.reduce((s,d) => s + d.hataAdedi, 0);
+  const toplamUretim = veri.reduce((s,d) => s + d.uretimAdedi, 0);
+  if (toplamUretim === 0) return 0;
+  return ((toplamUretim - toplamHata) / toplamUretim) * 100;
+}
+
+/* ── Tab Navigation ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('screen-' + btn.dataset.screen).classList.add('active');
+  });
+});
+
+/* ═══ E1: Özet KPI ══════════════════════════════════════ */
+function renderE1() {
+  const hat = document.getElementById('e1-hat')?.value || '';
+  const ay  = document.getElementById('e1-ay')?.value || '';
+
+  let veri = VERI;
+  if (hat) veri = veri.filter(d => d.hat === hat);
+  if (ay)  veri = veri.filter(d => d.ay === +ay);
+
+  // Bir önceki ay veya tüm veri karşılaştırması
+  const aylarMevcut = [...new Set(veri.map(d => d.ay))].sort((a,b)=>a-b);
+  let veriOnceki = [];
+  if (!ay && aylarMevcut.length >= 2) {
+    const sonAy = aylarMevcut[aylarMevcut.length - 1];
+    const oncAy = aylarMevcut[aylarMevcut.length - 2];
+    const veriSon = veri.filter(d => d.ay === sonAy);
+    veriOnceki   = veri.filter(d => d.ay === oncAy);
+    veri = veriSon;
+  }
+
+  const container = document.getElementById('e1-body');
+  if (!veri.length) {
+    container.innerHTML = '<div class="state-box empty"><div class="icon">📭</div>Bu dönem için veri bulunmamaktadır.</div>';
+    return;
+  }
+
+  const ppm         = ppmHesapla(veri);
+  const fpy         = fpyHesapla(veri);
+  const topMaliyet  = veri.reduce((s,d) => s + d.iskartaMaliyet, 0);
+  const topHata     = veri.reduce((s,d) => s + d.hataAdedi, 0);
+  const musIade     = veri.filter(d => d.tespitAsamasi === 'Müşteri İadesi');
+  const musIadeAdet = musIade.reduce((s,d) => s + d.hataAdedi, 0);
+  const musIadeOran = topHata > 0 ? (musIadeAdet / topHata) * 100 : 0;
+
+  // Delta
+  const ppmO     = veriOnceki.length ? ppmHesapla(veriOnceki) : null;
+  const fpyO     = veriOnceki.length ? fpyHesapla(veriOnceki) : null;
+  const malO     = veriOnceki.length ? veriOnceki.reduce((s,d)=>s+d.iskartaMaliyet,0) : null;
+  const hataO    = veriOnceki.length ? veriOnceki.reduce((s,d)=>s+d.hataAdedi,0) : null;
+
+  function delta(mevcut, onceki, tersLogic=false) {
+    if (onceki === null || onceki === 0) return '';
+    const pct = ((mevcut - onceki) / onceki) * 100;
+    const artis = pct > 0;
+    const kotu = tersLogic ? !artis : artis;
+    const ok = artis ? '↑' : '↓';
+    const cls = kotu ? 'up' : 'down';
+    return `<span class="kpi-delta ${cls}">${ok} ${Math.abs(pct).toFixed(1)}% önceki aya göre</span>`;
+  }
+
+  // Renk sınıfı
+  function kpiRenk(deger, hedef, tersLogic=false) {
+    if (tersLogic) return deger >= hedef ? 'iyi' : deger >= hedef * 0.95 ? 'uyari' : 'kritik';
+    return deger <= hedef * 0.8 ? 'iyi' : deger <= hedef ? 'uyari' : 'kritik';
+  }
+
+  const ppmRenk = kpiRenk(ppm, PPM_HEDEF);
+  const malRenk = kpiRenk(topMaliyet, MALIYET_HEDEF);
+
+  container.innerHTML = `
+    <div class="kpi-grid">
+      <div class="kpi-card ${ppmRenk}">
+        <div class="kpi-label">PPM (Hata Oranı)</div>
+        <div class="kpi-value ${ppmRenk}">${sayiBicim(ppm,0)}</div>
+        ${delta(ppm, ppmO)}
+        <div class="kpi-sub">Hedef: ${sayiBicim(PPM_HEDEF,0)} PPM</div>
+      </div>
+      <div class="kpi-card ${kpiRenk(fpy, 95, true)}">
+        <div class="kpi-label">İlk Geçiş Verimi (FPY)</div>
+        <div class="kpi-value ${kpiRenk(fpy,95,true)}">${sayiBicim(fpy,1)}%</div>
+        ${delta(fpy, fpyO, true)}
+        <div class="kpi-sub">Hedef: ≥ 95%</div>
+      </div>
+      <div class="kpi-card ${malRenk}">
+        <div class="kpi-label">Toplam Iskarta Maliyeti</div>
+        <div class="kpi-value" style="font-size:20px;color:var(--metin-1)">${paraBicim(topMaliyet)}</div>
+        ${delta(topMaliyet, malO)}
+        <div class="kpi-sub">Hedef: ≤ ${paraBicim(MALIYET_HEDEF)}</div>
+      </div>
+      <div class="kpi-card bilgi">
+        <div class="kpi-label">Toplam Hata Adedi</div>
+        <div class="kpi-value" style="color:var(--mevcut)">${sayiBicim(topHata,0)}</div>
+        ${delta(topHata, hataO)}
+        <div class="kpi-sub">${veri.length} kayıt</div>
+      </div>
+      <div class="kpi-card ${musIadeOran > 20 ? 'kritik' : musIadeOran > 10 ? 'uyari' : 'iyi'}">
+        <div class="kpi-label">Müşteri İade Oranı</div>
+        <div class="kpi-value ${musIadeOran > 20 ? 'kritik' : musIadeOran > 10 ? 'uyari' : 'iyi'}">${sayiBicim(musIadeOran,1)}%</div>
+        <div class="kpi-sub">${sayiBicim(musIadeAdet,0)} adet müşteri iadesi</div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Hat Bazında Hata Adedi</div>
+        </div>
+        <div class="chart-canvas-wrap" style="min-height:180px">
+          <canvas id="e1-hat-chart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Tespit Aşaması Dağılımı</div>
+        </div>
+        <div class="chart-canvas-wrap" style="min-height:180px">
+          <canvas id="e1-tespit-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Hat Chart
+  const hatGrp = {};
+  veri.forEach(d => { hatGrp[d.hat] = (hatGrp[d.hat]||0) + d.hataAdedi; });
+  const hatSirali = Object.entries(hatGrp).sort((a,b)=>b[1]-a[1]);
+  destroyChart('e1-hat-chart');
+  chartInstances['e1-hat-chart'] = new Chart(document.getElementById('e1-hat-chart'), {
+    type: 'bar',
+    data: {
+      labels: hatSirali.map(h=>h[0]),
+      datasets: [{
+        label: 'Hata Adedi',
+        data: hatSirali.map(h=>h[1]),
+        backgroundColor: '#1E40AF',
+        borderRadius: 4
+      }]
+    },
+    options: chartOpts('Hata Adedi', false)
+  });
+
+  // Tespit Chart
+  const tespitGrp = {};
+  veri.forEach(d => { tespitGrp[d.tespitAsamasi] = (tespitGrp[d.tespitAsamasi]||0) + d.hataAdedi; });
+  const tRenkler = {'Müşteri İadesi':'#DC2626','Final Kontrol':'#D97706','Süreç İçi':'#1E40AF','Gelen Kontrol':'#16A34A'};
+  destroyChart('e1-tespit-chart');
+  chartInstances['e1-tespit-chart'] = new Chart(document.getElementById('e1-tespit-chart'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(tespitGrp),
+      datasets: [{
+        data: Object.values(tespitGrp),
+        backgroundColor: Object.keys(tespitGrp).map(k => tRenkler[k] || '#94A3B8'),
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { font: { family: 'Inter', size: 11 }, boxWidth: 10 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${sayiBicim(ctx.raw,0)} adet` } }
+      }
+    }
+  });
+}
+
+/* ═══ E2: Trend ═════════════════════════════════════════ */
+function renderE2() {
+  const metrik = document.getElementById('e2-metrik')?.value || 'ppm';
+  const hat    = document.getElementById('e2-hat')?.value || '';
+
+  let veri = VERI;
+  if (hat) veri = veri.filter(d => d.hat === hat);
+
+  const container = document.getElementById('e2-body');
+  if (!veri.length) {
+    container.innerHTML = '<div class="state-box empty"><div class="icon">📭</div>Bu dönem için veri bulunmamaktadır.</div>';
+    return;
+  }
+
+  // Haftalık gruplama (Ay bazlı)
+  const haftalikGrp = {};
+  veri.forEach(d => {
+    const key = `${d.yil}-${String(d.ay).padStart(2,'0')}`;
+    if (!haftalikGrp[key]) haftalikGrp[key] = { hata:0, uretim:0, maliyet:0, ay:d.ay, yil:d.yil };
+    haftalikGrp[key].hata     += d.hataAdedi;
+    haftalikGrp[key].uretim   += d.uretimAdedi;
+    haftalikGrp[key].maliyet  += d.iskartaMaliyet;
+  });
+
+  const sirali = Object.entries(haftalikGrp).sort((a,b)=>a[0].localeCompare(b[0]));
+  const etiketler = sirali.map(([,v]) => AYLAR[v.ay-1] + ' ' + v.yil);
+  const degerler  = sirali.map(([,v]) => metrik === 'ppm'
+    ? (v.uretim > 0 ? (v.hata/v.uretim)*1e6 : 0)
+    : v.maliyet);
+
+  // Basit önceki dönem simülasyonu: her değeri %10–20 yukarı kaydır
+  const oncekiDegerler = degerler.map(v => v * (1 + (Math.random() * 0.12 + 0.05)));
+
+  const hedef = metrik === 'ppm' ? PPM_HEDEF : MALIYET_HEDEF;
+  const baslik = metrik === 'ppm' ? 'PPM Trendi' : 'Iskarta Maliyeti Trendi (₺)';
+  const hedefEtiket = metrik === 'ppm' ? `Hedef: ${PPM_HEDEF} PPM` : `Hedef: ${paraBicim(MALIYET_HEDEF)}`;
+
+  container.innerHTML = `
+    <div class="chart-card" style="flex:1;min-height:0">
+      <div class="chart-header">
+        <div class="chart-title">${baslik}</div>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#1E40AF"></span>Mevcut Dönem</span>
+          <span><span class="legend-dot" style="background:#94A3B8"></span>Önceki Dönem</span>
+          <span><span class="legend-dot" style="background:#DC2626;border-radius:0;height:2px;width:16px;display:inline-block;vertical-align:middle"></span>${hedefEtiket}</span>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas id="e2-chart"></canvas>
+      </div>
+    </div>
+  `;
+
+  destroyChart('e2-chart');
+  chartInstances['e2-chart'] = new Chart(document.getElementById('e2-chart'), {
+    type: 'line',
+    data: {
+      labels: etiketler,
+      datasets: [
+        {
+          label: 'Mevcut Dönem',
+          data: degerler,
+          borderColor: '#1E40AF',
+          backgroundColor: 'rgba(30,64,175,0.08)',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: 'Önceki Dönem',
+          data: oncekiDegerler,
+          borderColor: '#94A3B8',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          borderDash: [4,4],
+          pointRadius: 3,
+          fill: false,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        annotation: {
+          annotations: {
+            hedefCizgi: {
+              type: 'line',
+              yMin: hedef, yMax: hedef,
+              borderColor: '#DC2626',
+              borderWidth: 1.5,
+              borderDash: [6,4],
+              label: {
+                display: true,
+                content: 'Hedef',
+                position: 'end',
+                color: '#DC2626',
+                font: { size: 10, family: 'Inter' },
+                backgroundColor: 'transparent'
+              }
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const v = ctx.raw;
+              return ` ${ctx.dataset.label}: ${metrik==='ppm' ? sayiBicim(v,0)+' PPM' : paraBicim(v)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#F1F5F9' },
+          ticks: { font: { family: 'Inter', size: 11 }, color: '#64748B' }
+        },
+        y: {
+          grid: { color: '#F1F5F9' },
+          ticks: {
+            font: { family: 'Inter', size: 11 }, color: '#64748B',
+            callback: v => metrik === 'ppm' ? sayiBicim(v,0) : (v>=1000 ? (v/1000).toFixed(0)+'K ₺' : v+' ₺')
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ═══ E3: Pareto ════════════════════════════════════════ */
+function renderE3() {
+  const boyut = document.getElementById('e3-boyut')?.value || 'hata';
+  const hat   = document.getElementById('e3-hat')?.value || '';
+  const tespit= document.getElementById('e3-tespit')?.value || '';
+
+  let veri = VERI;
+  if (hat)    veri = veri.filter(d => d.hat === hat);
+  if (tespit) veri = veri.filter(d => d.tespitAsamasi === tespit);
+
+  const container = document.getElementById('e3-body');
+  if (!veri.length) {
+    container.innerHTML = '<div class="state-box empty"><div class="icon">📭</div>Bu dönem için veri bulunmamaktadır.</div>';
+    return;
+  }
+
+  const grupKey = boyut === 'hata' ? 'hataTipi' : boyut === 'hat' ? 'hat' : 'tespitAsamasi';
+  const grp = {};
+  veri.forEach(d => { grp[d[grupKey]] = (grp[d[grupKey]]||0) + d.hataAdedi; });
+  const sirali = Object.entries(grp).sort((a,b)=>b[1]-a[1]);
+
+  const toplamHata = sirali.reduce((s,[,v])=>s+v,0);
+  let birikimli = 0;
+  const kumPct = sirali.map(([,v]) => {
+    birikimli += v;
+    return parseFloat(((birikimli/toplamHata)*100).toFixed(1));
+  });
+
+  const baslik = boyut === 'hata' ? 'Hata Tipine Göre Pareto' :
+                 boyut === 'hat'  ? 'Hat Bazında Pareto' : 'Tespit Aşamasına Göre Pareto';
+
+  container.innerHTML = `
+    <div class="chart-card" style="flex:1;min-height:0">
+      <div class="chart-header">
+        <div class="chart-title">${baslik}</div>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#1E40AF"></span>Hata Adedi</span>
+          <span><span class="legend-dot" style="background:#DC2626;border-radius:0;height:2px;width:16px;display:inline-block;vertical-align:middle"></span>Kümülatif %</span>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas id="e3-chart"></canvas>
+      </div>
+    </div>
+  `;
+
+  destroyChart('e3-chart');
+  chartInstances['e3-chart'] = new Chart(document.getElementById('e3-chart'), {
+    type: 'bar',
+    data: {
+      labels: sirali.map(([k])=>k),
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Hata Adedi',
+          data: sirali.map(([,v])=>v),
+          backgroundColor: sirali.map((_,i) => i<2 ? '#1E40AF' : i<4 ? '#3B82F6' : '#94A3B8'),
+          borderRadius: 4,
+          yAxisID: 'y'
+        },
+        {
+          type: 'line',
+          label: 'Kümülatif %',
+          data: kumPct,
+          borderColor: '#DC2626',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 4,
+          fill: false,
+          yAxisID: 'y2',
+          tension: 0.2
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            afterLabel: (ctx) => {
+              if (ctx.datasetIndex === 0) {
+                return `Kümülatif: ${kumPct[ctx.dataIndex]}%`;
+              }
+              return '';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 11 }, color: '#64748B' }
+        },
+        y: {
+          position: 'left',
+          grid: { color: '#F1F5F9' },
+          title: { display: true, text: 'Hata Adedi', font: { family:'Inter', size:11 }, color:'#64748B' },
+          ticks: { font: { family:'Inter', size:11 }, color:'#64748B' }
+        },
+        y2: {
+          position: 'right',
+          min: 0, max: 100,
+          grid: { display: false },
+          title: { display: true, text: 'Kümülatif (%)', font: { family:'Inter', size:11 }, color:'#DC2626' },
+          ticks: { font: { family:'Inter', size:11 }, color:'#DC2626', callback: v => v+'%' }
+        }
+      }
+    }
+  });
+}
+
+/* ═══ E4: Detay Tablosu ══════════════════════════════════ */
+let currentPage = 1;
+const PAGE_SIZE = 10;
+let e4Filtered = [];
+let expandedRow = null;
+
+function renderE4() {
+  const hat    = document.getElementById('e4-hat')?.value || '';
+  const hata   = document.getElementById('e4-hata')?.value || '';
+  const tespit = document.getElementById('e4-tespit')?.value || '';
+
+  e4Filtered = VERI;
+  if (hat)    e4Filtered = e4Filtered.filter(d => d.hat === hat);
+  if (hata)   e4Filtered = e4Filtered.filter(d => d.hataTipi === hata);
+  if (tespit) e4Filtered = e4Filtered.filter(d => d.tespitAsamasi === tespit);
+  e4Filtered = [...e4Filtered].sort((a,b) => b.tarihObj - a.tarihObj);
+
+  const container = document.getElementById('e4-body');
+  if (!e4Filtered.length) {
+    container.innerHTML = '<div class="state-box empty"><div class="icon">📭</div>Bu dönem için veri bulunmamaktadır.</div>';
+    return;
+  }
+
+  const toplamSayfa = Math.ceil(e4Filtered.length / PAGE_SIZE);
+  if (currentPage > toplamSayfa) currentPage = toplamSayfa;
+  const bas = (currentPage - 1) * PAGE_SIZE;
+  const sayfa = e4Filtered.slice(bas, bas + PAGE_SIZE);
+
+  function durumBadge(tespit) {
+    if (tespit === 'Müşteri İadesi') return '<span class="badge badge-acik">🔴 Açık</span>';
+    if (tespit === 'Final Kontrol')  return '<span class="badge badge-inceleme">🟡 İnceleniyor</span>';
+    return '<span class="badge badge-kapali">🟢 Kapalı</span>';
+  }
+
+  const satirlar = sayfa.map((d, i) => {
+    const idx = bas + i;
+    return `
+      <tr data-idx="${idx}" onclick="toggleDetay(${idx}, this)">
+        <td>${d.tarih}</td>
+        <td style="font-family:var(--mono);font-size:12px">${d.parcaNo}</td>
+        <td>${d.hat}</td>
+        <td><span class="hata-chip">${d.hataTipi}</span></td>
+        <td style="text-align:right;font-family:var(--mono)">${sayiBicim(d.hataAdedi,0)}</td>
+        <td class="para">${paraBicim(d.iskartaMaliyet)}</td>
+        <td>${d.tespitAsamasi}</td>
+        <td>${durumBadge(d.tespitAsamasi)}</td>
+      </tr>
+      <tr class="detail-row" id="detail-${idx}" style="display:none">
+        <td colspan="8">
+          <div class="detail-body">
+            <div class="detail-item"><strong>Parça No</strong>${d.parcaNo}</div>
+            <div class="detail-item"><strong>Vardiya</strong>${d.vardiya}</div>
+            <div class="detail-item"><strong>Üretim Adedi</strong>${sayiBicim(d.uretimAdedi,0)} adet</div>
+            <div class="detail-item"><strong>PPM (Bu Kayıt)</strong>${sayiBicim((d.hataAdedi/d.uretimAdedi)*1e6,0)}</div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Sayfalama butonları
+  const maxGoster = 5;
+  let paginasyonHTML = `
+    <button class="page-btn" onclick="sayfaGit(1)" ${currentPage===1?'disabled':''}>«</button>
+    <button class="page-btn" onclick="sayfaGit(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>
+  `;
+  let baslangic = Math.max(1, currentPage - Math.floor(maxGoster/2));
+  let bitis = Math.min(toplamSayfa, baslangic + maxGoster - 1);
+  for (let p = baslangic; p <= bitis; p++) {
+    paginasyonHTML += `<button class="page-btn ${p===currentPage?'current':''}" onclick="sayfaGit(${p})">${p}</button>`;
+  }
+  paginasyonHTML += `
+    <button class="page-btn" onclick="sayfaGit(${currentPage+1})" ${currentPage===toplamSayfa?'disabled':''}>›</button>
+    <button class="page-btn" onclick="sayfaGit(${toplamSayfa})" ${currentPage===toplamSayfa?'disabled':''}>»</button>
+    <span style="margin-left:8px">${sayiBicim(e4Filtered.length,0)} kayıt · Sayfa ${currentPage}/${toplamSayfa}</span>
+  `;
+
+  container.innerHTML = `
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>Parça No</th>
+              <th>Hat</th>
+              <th>Hata Tipi</th>
+              <th style="text-align:right">Hata Adedi</th>
+              <th>Iskarta Maliyeti</th>
+              <th>Tespit Aşaması</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>${satirlar}</tbody>
+        </table>
+      </div>
+      <div class="pagination">${paginasyonHTML}</div>
+    </div>
+  `;
+}
+
+function toggleDetay(idx, row) {
+  const detayRow = document.getElementById('detail-' + idx);
+  if (!detayRow) return;
+  const acik = detayRow.style.display !== 'none';
+  // Hepsini kapat
+  document.querySelectorAll('.detail-row').forEach(r => r.style.display='none');
+  document.querySelectorAll('tbody tr:not(.detail-row)').forEach(r => r.classList.remove('expanded'));
+  if (!acik) {
+    detayRow.style.display = 'table-row';
+    row.classList.add('expanded');
+  }
+}
+
+function sayfaGit(p) {
+  currentPage = p;
+  expandedRow = null;
+  renderE4();
+}
+
+/* ── Chart Yardımcıları ── */
+function destroyChart(id) {
+  if (chartInstances[id]) {
+    chartInstances[id].destroy();
+    delete chartInstances[id];
+  }
+}
+
+function chartOpts(yLabel, horizontal=false) {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: horizontal ? 'y' : 'x',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.raw.toLocaleString('tr-TR')} adet` } }
+    },
+    scales: {
+      x: { grid: { color: '#F1F5F9' }, ticks: { font: { family:'Inter', size:11 }, color:'#64748B' } },
+      y: {
+        grid: { color: '#F1F5F9' },
+        ticks: { font: { family:'Inter', size:11 }, color:'#64748B' },
+        title: { display: !horizontal, text: yLabel, font:{ family:'Inter', size:11 }, color:'#64748B' }
+      }
+    }
+  };
+}
+
+/* ── Başlat ── */
+veriYukle();
+</script>
+</body>
+</html>

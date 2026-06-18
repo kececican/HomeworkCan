@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VALEO — Kalite & Iskarta Dashboard</title>
+  <style>
+/* ===== VALEO Kalite Dashboard — style.css ===== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --mevcut:    #82E600;
+  --onceki:    #16445F;
+  --iyi:       #82E600;
+  --uyari:     #F59E0B;
+  --kritik:    #EF4444;
+  --zemin:     #1D2433;
+  --kart:      #243347;
+  --sinir:     #16445F;
+  --metin-1:   #F1F3F9;
+  --metin-2:   #D8DCE8;
+  --metin-3:   #A8B0C4;
+  --metin-4:   #7A8499;
+  --shadow:    0 1px 6px rgba(0,0,0,0.3);
+  --r:         8px;
+  --font:      'Inter', system-ui, sans-serif;
+  --font-head: 'Montserrat', 'Inter', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+}
+
+h1, h2, h3, .kpi-value, .tab-btn { font-family: var(--font-head); }
+
+html, body {
+  height: 100%;
+  font-family: var(--font);
+  background: var(--zemin);
+  color: var(--metin-3);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+/* ── App Shell ── */
+.app {
+  display: grid;
+  grid-template-rows: 56px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Top Nav ── */
+.topnav {
+  background: var(--mevcut);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  gap: 16px;
+  z-index: 100;
+}
+
+.topnav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.brand-title {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand-sub {
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.topnav-tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.65);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.tab-btn.active { background: rgba(255,255,255,0.2); color: #fff; }
+
+.topnav-meta {
+  color: rgba(255,255,255,0.55);
+  font-size: 11px;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+
+/* ── Screen Container ── */
+.screens {
+  overflow: hidden;
+  position: relative;
+}
+
+.screen {
+  display: none;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.screen.active { display: flex; }
+
+/* ── Filter Bar ── */
+.filter-bar {
+  background: var(--kart);
+  border-bottom: 1px solid var(--sinir);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--metin-4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 4px;
+}
+
+.filter-select {
+  font-family: var(--font);
+  font-size: 12px;
+  color: var(--metin-2);
+  background: var(--zemin);
+  border: 1px solid var(--sinir);
+  border-radius: 6px;
+  padding: 5px 28px 5px 10px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394A3B8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  min-width: 110px;
+}
+
+.filter-select:focus { outline: 2px solid var(--mevcut); outline-offset: 2px; }
+
+/* ── Screen Body ── */
+.screen-body {
+  flex: 1;
+  overflow: auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── KPI Grid ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.kpi-card {
+  background: var(--kart);
+  border: 1px solid var(--sinir);
+  border-radius: var(--r);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.kpi-card.iyi::before   { background: var(--iyi); }
+.kpi-card.uyari::before { background: var(--uyari); }
+.kpi-card.kritik::before{ background: var(--kritik); }
+.kpi-card.bilgi::before { background: var(--mevcut); }
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--metin-4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--metin-1);
+  line-height: 1;
+  font-family: var(--mono);
+}
+
+.kpi-value.iyi    { color: var(--iyi); }
+.kpi-value.uyari  { color: var(--uyari); }
+.kpi-value.kritik { color: var(--kritik); }
+
+.kpi-delta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.kpi-delta.up   { color: var(--kritik); }
+.kpi-delta.down { color: var(--iyi); }
+.kpi-delta.neu  { color: var(--metin-4); }
+
+.kpi-sub {
+  font-size: 11px;
+  color: var(--metin-4);
+}
+
+/* ── Chart Cards ── */
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.chart-card {
+  background: var(--kart);
+  border: 1px solid var(--sinir);
+  border-radius: var(--r);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.chart-card.full { grid-column: 1 / -1; }
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chart-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--metin-2);
+}
+
+.chart-legend {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--metin-4);
+}
+
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.chart-canvas-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.chart-canvas-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── E2 Trend full height ── */
+#screen-e2 .screen-body {
+  gap: 12px;
+}
+
+#screen-e2 .chart-card {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── E3 Pareto ── */
+.pareto-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+/* ── E4 Table ── */
+.table-wrap {
+  background: var(--kart);
+  border: 1px solid var(--sinir);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.table-scroll {
+  overflow: auto;
+  flex: 1;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead tr {
+  background: var(--zemin);
+  border-bottom: 2px solid var(--sinir);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+thead th {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--metin-4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--sinir);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+tbody tr:hover { background: #2d4060; }
+tbody tr.expanded { background: #1e3a5a; }
+
+tbody td {
+  padding: 9px 12px;
+  color: var(--metin-3);
+  vertical-align: middle;
+}
+
+.detail-row td {
+  padding: 0;
+}
+
+.detail-body {
+  padding: 12px 16px;
+  background: var(--zemin);
+  border-top: 1px solid var(--sinir);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  font-size: 12px;
+}
+
+.detail-item strong {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--metin-4);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+/* ── Durum Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.badge-acik     { background: #3d1f1f; color: #EF4444; }
+.badge-inceleme { background: #3d3210; color: #F59E0B; }
+.badge-kapali   { background: #1a3320; color: #82E600; }
+
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--sinir);
+  font-size: 12px;
+  color: var(--metin-4);
+}
+
+.page-btn {
+  background: var(--zemin);
+  border: 1px solid var(--sinir);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-family: var(--font);
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--metin-2);
+  transition: background 0.1s;
+}
+
+.page-btn:hover:not(:disabled) { background: var(--sinir); }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-btn.current { background: var(--mevcut); color: #1D2433; border-color: var(--mevcut); }
+
+/* ── Status States ── */
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  color: var(--metin-4);
+  font-size: 13px;
+  text-align: center;
+}
+
+.state-box .icon { font-size: 28px; }
+.state-box.error  { color: var(--kritik); }
+.state-box.empty  { color: var(--metin-4); }
+
+/* ── Hata Tipi chip ── */
+.hata-chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #1e3a5a;
+  color: var(--mevcut);
+}
+
+/* ── Para format ── */
+.para { font-family: var(--mono); font-size: 12px; color: var(--metin-2); }
+
+/* ── Scroll ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--sinir); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--onceki); }
+
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<script>
+window.__CSV_INLINE__ = 'Tarih,Parça No,Hat,Vardiya,Hata Tipi,Hata Adedi,Üretim Adedi,Iskarta Maliyeti (₺),Tespit Aşaması\n01.01.2024,VAL-009,Hat-4,Vardiya-1,Deformasyon,19,665,14217.65,Müşteri İadesi\n01.01.2024,VAL-014,Hat-4,Vardiya-3,Boyut Hatası,17,392,14050.54,Müşteri İadesi\n01.02.2024,VAL-010,Hat-4,Vardiya-2,Kaynak Hatası,18,612,19801.87,Müşteri İadesi\n01.05.2024,VAL-009,Hat-2,Vardiya-3,Renk Uyumsuzluğu,14,633,4712.3,Süreç İçi\n01.05.2024,VAL-015,Hat-4,Vardiya-3,Deformasyon,3,217,2186.17,Müşteri İadesi\n01.05.2024,VAL-003,Hat-1,Vardiya-1,Deformasyon,3,287,2248.94,Final Kontrol\n02.03.2024,VAL-015,Hat-3,Vardiya-3,Boyut Hatası,16,492,12979.07,Final Kontrol\n02.03.2024,VAL-019,Hat-1,Vardiya-3,Kaynak Hatası,9,540,8997.78,Final Kontrol\n02.04.2024,VAL-017,Hat-1,Vardiya-2,Renk Uyumsuzluğu,51,719,17354.1,Gelen Kontrol\n02.05.2024,VAL-003,Hat-1,Vardiya-1,Montaj Hatası,5,703,4975.48,Gelen Kontrol\n02.06.2024,VAL-011,Hat-1,Vardiya-2,Boyut Hatası,7,537,6018.98,Müşteri İadesi\n02.07.2024,VAL-008,Hat-3,Vardiya-2,Malzeme Hatası,9,605,11636.3,Final Kontrol\n02.07.2024,VAL-017,Hat-3,Vardiya-1,Kaynak Hatası,27,479,31688.26,Müşteri İadesi\n03.01.2024,VAL-003,Hat-2,Vardiya-3,Yüzey Çizigi,32,616,13588.31,Süreç İçi\n03.03.2024,VAL-019,Hat-3,Vardiya-3,Malzeme Hatası,36,684,45278.3,Müşteri İadesi\n03.04.2024,VAL-012,Hat-1,Vardiya-3,Yüzey Çizigi,7,455,2853.96,Müşteri İadesi\n03.06.2024,VAL-018,Hat-1,Vardiya-1,Yüzey Çizigi,27,758,10705.96,Final Kontrol\n03.06.2024,VAL-011,Hat-2,Vardiya-1,Yüzey Çizigi,33,470,13828.21,Gelen Kontrol\n03.07.2024,VAL-018,Hat-1,Vardiya-1,Deformasyon,22,473,15421.03,Müşteri İadesi\n03.07.2024,VAL-011,Hat-2,Vardiya-1,Boyut Hatası,49,748,43234.06,Süreç İçi\n04.01.2024,VAL-016,Hat-3,Vardiya-2,Montaj Hatası,22,651,20198.98,Gelen Kontrol\n04.04.2024,VAL-015,Hat-4,Vardiya-1,Deformasyon,25,488,19011.05,Müşteri İadesi\n04.05.2024,VAL-012,Hat-2,Vardiya-3,Deformasyon,22,464,15983.18,Final Kontrol\n04.05.2024,VAL-001,Hat-1,Vardiya-3,Kaynak Hatası,11,445,11642.02,Gelen Kontrol\n04.06.2024,VAL-013,Hat-1,Vardiya-1,Renk Uyumsuzluğu,9,394,2535.77,Müşteri İadesi\n05.02.2024,VAL-010,Hat-1,Vardiya-2,Deformasyon,45,683,36464.8,Müşteri İadesi\n05.03.2024,VAL-011,Hat-2,Vardiya-2,Boyut Hatası,43,796,33928.84,Final Kontrol\n05.06.2024,VAL-015,Hat-1,Vardiya-2,Montaj Hatası,13,789,13296.35,Müşteri İadesi\n05.06.2024,VAL-015,Hat-3,Vardiya-1,Yüzey Çizigi,16,746,6463.92,Müşteri İadesi\n06.03.2024,VAL-006,Hat-3,Vardiya-1,Renk Uyumsuzluğu,25,317,8244.92,Final Kontrol\n06.05.2024,VAL-002,Hat-1,Vardiya-3,Deformasyon,5,312,3896.86,Müşteri İadesi\n06.06.2024,VAL-003,Hat-1,Vardiya-1,Boyut Hatası,14,462,12697.21,Müşteri İadesi\n07.01.2024,VAL-013,Hat-2,Vardiya-2,Malzeme Hatası,5,485,6833.61,Final Kontrol\n07.02.2024,VAL-017,Hat-2,Vardiya-1,Montaj Hatası,44,779,45642.69,Süreç İçi\n07.02.2024,VAL-009,Hat-1,Vardiya-1,Deformasyon,5,348,3830.56,Süreç İçi\n07.02.2024,VAL-005,Hat-1,Vardiya-3,Malzeme Hatası,36,799,46909.38,Müşteri İadesi\n07.03.2024,VAL-011,Hat-4,Vardiya-2,Yüzey Çizigi,21,665,8533.35,Müşteri İadesi\n07.04.2024,VAL-015,Hat-3,Vardiya-3,Kaynak Hatası,11,573,11785.84,Süreç İçi\n07.04.2024,VAL-018,Hat-3,Vardiya-2,Yüzey Çizigi,4,532,1588.96,Gelen Kontrol\n07.04.2024,VAL-015,Hat-4,Vardiya-3,Malzeme Hatası,20,639,25343.15,Gelen Kontrol\n07.04.2024,VAL-005,Hat-4,Vardiya-1,Montaj Hatası,5,237,4902.25,Final Kontrol\n07.04.2024,VAL-004,Hat-3,Vardiya-3,Kaynak Hatası,31,439,30860.67,Final Kontrol\n07.05.2024,VAL-015,Hat-4,Vardiya-3,Yüzey Çizigi,9,471,3588.45,Final Kontrol\n08.02.2024,VAL-012,Hat-1,Vardiya-2,Renk Uyumsuzluğu,10,765,3056.47,Gelen Kontrol\n08.02.2024,VAL-003,Hat-3,Vardiya-3,Yüzey Çizigi,18,321,7959.84,Süreç İçi\n08.03.2024,VAL-012,Hat-2,Vardiya-3,Boyut Hatası,24,450,19522.75,Müşteri İadesi\n08.03.2024,VAL-005,Hat-1,Vardiya-2,Kaynak Hatası,34,631,34510.1,Gelen Kontrol\n08.04.2024,VAL-004,Hat-4,Vardiya-3,Yüzey Çizigi,37,590,15101.65,Final Kontrol\n08.04.2024,VAL-012,Hat-1,Vardiya-1,Yüzey Çizigi,11,228,5018.08,Final Kontrol\n08.05.2024,VAL-006,Hat-3,Vardiya-1,Malzeme Hatası,52,693,62336.84,Final Kontrol\n08.07.2024,VAL-019,Hat-1,Vardiya-3,Montaj Hatası,1,232,900.36,Süreç İçi\n08.07.2024,VAL-018,Hat-4,Vardiya-3,Kaynak Hatası,36,637,35716.58,Gelen Kontrol\n08.07.2024,VAL-009,Hat-4,Vardiya-1,Kaynak Hatası,39,737,41038.13,Gelen Kontrol\n08.07.2024,VAL-007,Hat-1,Vardiya-1,Kaynak Hatası,17,416,19300.0,Süreç İçi\n09.01.2024,VAL-010,Hat-2,Vardiya-2,Kaynak Hatası,30,489,30169.79,Süreç İçi\n09.02.2024,VAL-005,Hat-2,Vardiya-3,Montaj Hatası,19,317,20287.45,Müşteri İadesi\n09.03.2024,VAL-020,Hat-1,Vardiya-2,Kaynak Hatası,18,375,20707.34,Süreç İçi\n09.05.2024,VAL-005,Hat-2,Vardiya-3,Malzeme Hatası,18,365,24540.75,Gelen Kontrol\n09.06.2024,VAL-014,Hat-2,Vardiya-1,Boyut Hatası,15,757,13126.47,Final Kontrol\n09.07.2024,VAL-015,Hat-4,Vardiya-3,Malzeme Hatası,18,453,23696.16,Müşteri İadesi\n10.01.2024,VAL-008,Hat-4,Vardiya-1,Yüzey Çizigi,23,671,9283.63,Süreç İçi\n10.01.2024,VAL-003,Hat-4,Vardiya-3,Malzeme Hatası,21,458,24233.59,Müşteri İadesi\n10.05.2024,VAL-017,Hat-1,Vardiya-3,Renk Uyumsuzluğu,29,398,9486.66,Final Kontrol\n10.06.2024,VAL-008,Hat-3,Vardiya-2,Kaynak Hatası,14,292,16873.28,Gelen Kontrol\n10.07.2024,VAL-008,Hat-2,Vardiya-1,Deformasyon,26,366,20988.17,Müşteri İadesi\n10.07.2024,VAL-013,Hat-2,Vardiya-3,Montaj Hatası,22,664,20082.75,Final Kontrol\n11.04.2024,VAL-009,Hat-1,Vardiya-3,Renk Uyumsuzluğu,15,326,4527.78,Final Kontrol\n11.04.2024,VAL-001,Hat-1,Vardiya-2,Yüzey Çizigi,14,508,6194.4,Final Kontrol\n11.06.2024,VAL-009,Hat-4,Vardiya-1,Boyut Hatası,11,203,9856.99,Final Kontrol\n11.07.2024,VAL-010,Hat-2,Vardiya-2,Yüzey Çizigi,10,403,3800.52,Süreç İçi\n11.07.2024,VAL-009,Hat-4,Vardiya-2,Deformasyon,16,283,10991.14,Gelen Kontrol\n11.07.2024,VAL-019,Hat-4,Vardiya-1,Renk Uyumsuzluğu,22,588,6177.15,Final Kontrol\n12.01.2024,VAL-018,Hat-1,Vardiya-1,Malzeme Hatası,21,329,28184.42,Müşteri İadesi\n12.02.2024,VAL-016,Hat-4,Vardiya-2,Montaj Hatası,26,418,27530.85,Süreç İçi\n12.02.2024,VAL-001,Hat-3,Vardiya-2,Boyut Hatası,4,532,3259.49,Final Kontrol\n12.04.2024,VAL-003,Hat-3,Vardiya-3,Yüzey Çizigi,57,780,24983.37,Süreç İçi\n12.04.2024,VAL-005,Hat-2,Vardiya-1,Kaynak Hatası,4,205,4645.01,Süreç İçi\n12.05.2024,VAL-010,Hat-1,Vardiya-2,Boyut Hatası,9,364,7572.46,Süreç İçi\n12.06.2024,VAL-001,Hat-1,Vardiya-3,Kaynak Hatası,16,481,16625.7,Gelen Kontrol\n13.01.2024,VAL-017,Hat-4,Vardiya-1,Deformasyon,11,743,7619.1,Gelen Kontrol\n13.02.2024,VAL-012,Hat-4,Vardiya-3,Boyut Hatası,7,647,5644.55,Müşteri İadesi\n13.05.2024,VAL-012,Hat-2,Vardiya-3,Montaj Hatası,11,271,11045.52,Gelen Kontrol\n13.05.2024,VAL-020,Hat-3,Vardiya-3,Deformasyon,50,751,37874.58,Müşteri İadesi\n13.06.2024,VAL-018,Hat-4,Vardiya-1,Malzeme Hatası,4,228,5377.04,Final Kontrol\n13.07.2024,VAL-014,Hat-2,Vardiya-1,Malzeme Hatası,10,484,11788.28,Final Kontrol\n14.02.2024,VAL-006,Hat-1,Vardiya-2,Boyut Hatası,29,618,25583.6,Müşteri İadesi\n14.02.2024,VAL-016,Hat-4,Vardiya-1,Kaynak Hatası,26,386,26511.36,Müşteri İadesi\n14.03.2024,VAL-014,Hat-2,Vardiya-2,Deformasyon,39,793,30557.09,Müşteri İadesi\n14.03.2024,VAL-003,Hat-1,Vardiya-2,Renk Uyumsuzluğu,25,719,7692.2,Gelen Kontrol\n14.03.2024,VAL-010,Hat-2,Vardiya-1,Boyut Hatası,8,248,6690.96,Müşteri İadesi\n14.04.2024,VAL-008,Hat-1,Vardiya-2,Deformasyon,15,316,12419.3,Süreç İçi\n14.04.2024,VAL-002,Hat-3,Vardiya-2,Kaynak Hatası,14,579,15225.62,Süreç İçi\n14.05.2024,VAL-012,Hat-2,Vardiya-3,Malzeme Hatası,25,489,30679.81,Final Kontrol\n14.06.2024,VAL-008,Hat-2,Vardiya-3,Boyut Hatası,9,349,7186.83,Süreç İçi\n14.07.2024,VAL-019,Hat-3,Vardiya-3,Yüzey Çizigi,36,639,16555.03,Gelen Kontrol\n15.01.2024,VAL-017,Hat-3,Vardiya-2,Boyut Hatası,30,517,25254.76,Gelen Kontrol\n15.02.2024,VAL-014,Hat-3,Vardiya-2,Deformasyon,18,454,12747.57,Gelen Kontrol\n15.05.2024,VAL-015,Hat-3,Vardiya-1,Renk Uyumsuzluğu,28,716,9253.87,Müşteri İadesi\n15.05.2024,VAL-015,Hat-3,Vardiya-3,Renk Uyumsuzluğu,7,640,2297.2,Gelen Kontrol\n15.06.2024,VAL-014,Hat-2,Vardiya-2,Montaj Hatası,27,433,25607.63,Müşteri İadesi\n16.02.2024,VAL-016,Hat-4,Vardiya-3,Boyut Hatası,23,681,19191.64,Final Kontrol\n16.02.2024,VAL-019,Hat-2,Vardiya-1,Kaynak Hatası,5,610,5106.06,Gelen Kontrol\n16.03.2024,VAL-012,Hat-2,Vardiya-2,Yüzey Çizigi,1,509,437.47,Süreç İçi\n16.03.2024,VAL-013,Hat-1,Vardiya-2,Malzeme Hatası,2,208,2705.31,Müşteri İadesi\n16.03.2024,VAL-014,Hat-3,Vardiya-3,Yüzey Çizigi,9,405,3996.6,Final Kontrol\n16.03.2024,VAL-002,Hat-2,Vardiya-3,Deformasyon,3,404,2195.91,Final Kontrol\n16.04.2024,VAL-011,Hat-4,Vardiya-2,Renk Uyumsuzluğu,27,677,7637.23,Müşteri İadesi\n16.04.2024,VAL-017,Hat-3,Vardiya-1,Malzeme Hatası,10,202,13065.13,Müşteri İadesi\n16.04.2024,VAL-011,Hat-1,Vardiya-3,Montaj Hatası,17,520,16241.17,Süreç İçi\n16.05.2024,VAL-012,Hat-4,Vardiya-2,Boyut Hatası,42,718,34566.39,Müşteri İadesi\n16.05.2024,VAL-011,Hat-4,Vardiya-1,Kaynak Hatası,35,699,34926.42,Gelen Kontrol\n16.06.2024,VAL-002,Hat-1,Vardiya-3,Montaj Hatası,7,547,6515.16,Süreç İçi\n16.06.2024,VAL-005,Hat-4,Vardiya-1,Renk Uyumsuzluğu,10,286,3136.53,Final Kontrol\n17.01.2024,VAL-013,Hat-4,Vardiya-3,Renk Uyumsuzluğu,34,679,10015.98,Gelen Kontrol\n17.03.2024,VAL-014,Hat-3,Vardiya-1,Malzeme Hatası,45,612,53951.12,Süreç İçi\n17.04.2024,VAL-006,Hat-4,Vardiya-2,Renk Uyumsuzluğu,20,782,6083.53,Gelen Kontrol\n17.04.2024,VAL-016,Hat-2,Vardiya-2,Yüzey Çizigi,28,479,11726.23,Müşteri İadesi\n17.06.2024,VAL-015,Hat-3,Vardiya-2,Kaynak Hatası,2,231,2419.38,Müşteri İadesi\n17.06.2024,VAL-008,Hat-4,Vardiya-1,Deformasyon,12,310,9749.96,Final Kontrol\n17.06.2024,VAL-001,Hat-3,Vardiya-1,Yüzey Çizigi,20,479,9108.18,Final Kontrol\n18.01.2024,VAL-011,Hat-1,Vardiya-1,Boyut Hatası,16,726,12997.46,Müşteri İadesi\n18.01.2024,VAL-008,Hat-1,Vardiya-3,Montaj Hatası,19,322,17674.91,Gelen Kontrol\n18.02.2024,VAL-007,Hat-3,Vardiya-1,Boyut Hatası,48,793,41144.31,Final Kontrol\n18.02.2024,VAL-019,Hat-2,Vardiya-3,Montaj Hatası,27,439,24044.98,Müşteri İadesi\n18.03.2024,VAL-004,Hat-4,Vardiya-2,Boyut Hatası,35,440,27582.2,Müşteri İadesi\n18.05.2024,VAL-019,Hat-2,Vardiya-1,Renk Uyumsuzluğu,16,684,5242.34,Müşteri İadesi\n18.05.2024,VAL-011,Hat-1,Vardiya-1,Deformasyon,20,334,14825.23,Süreç İçi\n18.06.2024,VAL-005,Hat-1,Vardiya-1,Boyut Hatası,16,566,13841.68,Gelen Kontrol\n19.01.2024,VAL-006,Hat-1,Vardiya-2,Deformasyon,39,514,31115.82,Final Kontrol\n19.02.2024,VAL-002,Hat-1,Vardiya-1,Kaynak Hatası,19,433,22928.23,Süreç İçi\n19.04.2024,VAL-020,Hat-1,Vardiya-3,Malzeme Hatası,27,446,31639.37,Gelen Kontrol\n19.06.2024,VAL-002,Hat-4,Vardiya-1,Malzeme Hatası,23,519,26470.7,Süreç İçi\n20.01.2024,VAL-016,Hat-2,Vardiya-3,Montaj Hatası,49,777,48783.21,Final Kontrol\n20.03.2024,VAL-012,Hat-4,Vardiya-1,Montaj Hatası,29,729,26265.79,Süreç İçi\n20.04.2024,VAL-010,Hat-1,Vardiya-1,Kaynak Hatası,34,698,38650.15,Gelen Kontrol\n20.05.2024,VAL-002,Hat-1,Vardiya-1,Kaynak Hatası,54,753,53635.32,Gelen Kontrol\n20.05.2024,VAL-012,Hat-3,Vardiya-1,Kaynak Hatası,18,664,19034.23,Süreç İçi\n20.06.2024,VAL-006,Hat-4,Vardiya-2,Deformasyon,9,678,7497.63,Gelen Kontrol\n20.06.2024,VAL-019,Hat-4,Vardiya-3,Kaynak Hatası,14,358,15877.16,Müşteri İadesi\n20.06.2024,VAL-014,Hat-1,Vardiya-1,Renk Uyumsuzluğu,2,570,602.96,Süreç İçi\n21.01.2024,VAL-016,Hat-1,Vardiya-3,Deformasyon,18,270,14407.32,Süreç İçi\n21.01.2024,VAL-019,Hat-4,Vardiya-3,Renk Uyumsuzluğu,21,735,7075.99,Süreç İçi\n21.01.2024,VAL-005,Hat-2,Vardiya-1,Yüzey Çizigi,45,592,17587.6,Süreç İçi\n21.01.2024,VAL-014,Hat-1,Vardiya-1,Kaynak Hatası,39,530,40758.16,Gelen Kontrol\n21.01.2024,VAL-020,Hat-4,Vardiya-1,Kaynak Hatası,32,446,38106.32,Süreç İçi\n21.01.2024,VAL-010,Hat-4,Vardiya-1,Kaynak Hatası,15,547,15949.13,Süreç İçi\n21.02.2024,VAL-009,Hat-2,Vardiya-3,Boyut Hatası,24,692,20622.53,Gelen Kontrol\n21.03.2024,VAL-001,Hat-1,Vardiya-3,Montaj Hatası,7,776,6274.51,Süreç İçi\n21.03.2024,VAL-015,Hat-2,Vardiya-3,Boyut Hatası,29,680,25297.73,Final Kontrol\n21.06.2024,VAL-009,Hat-1,Vardiya-2,Renk Uyumsuzluğu,6,241,1849.03,Müşteri İadesi\n22.04.2024,VAL-017,Hat-1,Vardiya-1,Montaj Hatası,5,215,4811.78,Süreç İçi\n22.05.2024,VAL-019,Hat-1,Vardiya-2,Renk Uyumsuzluğu,22,775,7051.9,Müşteri İadesi\n23.03.2024,VAL-001,Hat-4,Vardiya-3,Boyut Hatası,20,571,16114.14,Süreç İçi\n23.04.2024,VAL-017,Hat-2,Vardiya-1,Montaj Hatası,22,373,19769.64,Final Kontrol\n23.04.2024,VAL-007,Hat-1,Vardiya-3,Malzeme Hatası,9,762,12212.26,Müşteri İadesi\n23.04.2024,VAL-019,Hat-3,Vardiya-1,Malzeme Hatası,45,634,53438.61,Final Kontrol\n23.04.2024,VAL-016,Hat-4,Vardiya-2,Renk Uyumsuzluğu,27,652,7990.28,Gelen Kontrol\n23.05.2024,VAL-003,Hat-3,Vardiya-2,Montaj Hatası,14,243,12399.43,Gelen Kontrol\n24.01.2024,VAL-004,Hat-4,Vardiya-3,Malzeme Hatası,39,552,46454.08,Gelen Kontrol\n24.01.2024,VAL-015,Hat-2,Vardiya-1,Malzeme Hatası,14,227,15936.4,Final Kontrol\n24.03.2024,VAL-002,Hat-1,Vardiya-2,Yüzey Çizigi,25,361,10747.46,Gelen Kontrol\n24.03.2024,VAL-001,Hat-1,Vardiya-3,Montaj Hatası,12,640,10887.84,Süreç İçi\n24.04.2024,VAL-014,Hat-2,Vardiya-2,Yüzey Çizigi,30,485,11969.51,Gelen Kontrol\n24.04.2024,VAL-012,Hat-4,Vardiya-2,Malzeme Hatası,49,765,61782.02,Müşteri İadesi\n24.04.2024,VAL-017,Hat-3,Vardiya-3,Renk Uyumsuzluğu,15,311,4653.57,Gelen Kontrol\n24.05.2024,VAL-003,Hat-2,Vardiya-2,Deformasyon,14,767,10823.82,Süreç İçi\n24.06.2024,VAL-016,Hat-1,Vardiya-3,Kaynak Hatası,5,654,5939.19,Final Kontrol\n25.01.2024,VAL-014,Hat-1,Vardiya-3,Malzeme Hatası,27,633,33527.42,Gelen Kontrol\n25.01.2024,VAL-010,Hat-1,Vardiya-1,Deformasyon,3,651,2316.29,Süreç İçi\n26.01.2024,VAL-018,Hat-3,Vardiya-1,Kaynak Hatası,4,567,4310.36,Süreç İçi\n26.02.2024,VAL-015,Hat-1,Vardiya-1,Kaynak Hatası,27,509,27423.06,Gelen Kontrol\n26.04.2024,VAL-009,Hat-1,Vardiya-3,Renk Uyumsuzluğu,17,382,5704.91,Final Kontrol\n26.04.2024,VAL-013,Hat-2,Vardiya-2,Yüzey Çizigi,48,720,21689.44,Gelen Kontrol\n26.04.2024,VAL-007,Hat-1,Vardiya-1,Kaynak Hatası,2,221,2326.19,Süreç İçi\n26.05.2024,VAL-011,Hat-2,Vardiya-2,Renk Uyumsuzluğu,33,687,9515.66,Gelen Kontrol\n26.06.2024,VAL-015,Hat-2,Vardiya-2,Boyut Hatası,24,620,21119.56,Süreç İçi\n27.01.2024,VAL-009,Hat-2,Vardiya-2,Boyut Hatası,24,309,20617.15,Final Kontrol\n27.01.2024,VAL-011,Hat-2,Vardiya-3,Montaj Hatası,19,707,19225.46,Müşteri İadesi\n27.01.2024,VAL-003,Hat-3,Vardiya-2,Renk Uyumsuzluğu,2,376,588.72,Müşteri İadesi\n27.02.2024,VAL-002,Hat-1,Vardiya-3,Deformasyon,8,231,5714.42,Gelen Kontrol\n27.03.2024,VAL-019,Hat-1,Vardiya-1,Renk Uyumsuzluğu,15,435,4191.69,Gelen Kontrol\n27.04.2024,VAL-013,Hat-1,Vardiya-3,Boyut Hatası,19,765,17213.98,Final Kontrol\n27.05.2024,VAL-019,Hat-4,Vardiya-2,Montaj Hatası,19,627,17186.91,Gelen Kontrol\n27.06.2024,VAL-002,Hat-4,Vardiya-3,Renk Uyumsuzluğu,8,455,2458.41,Müşteri İadesi\n28.01.2024,VAL-012,Hat-4,Vardiya-3,Kaynak Hatası,46,670,47088.27,Süreç İçi\n28.02.2024,VAL-008,Hat-3,Vardiya-3,Kaynak Hatası,20,394,20902.76,Süreç İçi\n28.03.2024,VAL-007,Hat-4,Vardiya-3,Yüzey Çizigi,5,340,1922.41,Gelen Kontrol\n28.04.2024,VAL-015,Hat-3,Vardiya-1,Malzeme Hatası,15,209,20254.54,Süreç İçi\n28.05.2024,VAL-002,Hat-3,Vardiya-2,Boyut Hatası,23,644,20443.61,Final Kontrol\n28.05.2024,VAL-010,Hat-1,Vardiya-1,Renk Uyumsuzluğu,26,584,8771.65,Süreç İçi\n29.01.2024,VAL-020,Hat-4,Vardiya-2,Renk Uyumsuzluğu,17,216,5349.1,Süreç İçi\n29.04.2024,VAL-005,Hat-1,Vardiya-1,Deformasyon,26,431,21606.65,Final Kontrol\n29.05.2024,VAL-019,Hat-4,Vardiya-3,Montaj Hatası,15,570,16162.14,Süreç İçi\n29.05.2024,VAL-019,Hat-1,Vardiya-2,Montaj Hatası,1,688,1066.78,Final Kontrol\n29.06.2024,VAL-020,Hat-3,Vardiya-3,Deformasyon,1,741,785.52,Final Kontrol\n30.04.2024,VAL-011,Hat-3,Vardiya-3,Renk Uyumsuzluğu,42,607,11927.14,Final Kontrol\n30.04.2024,VAL-013,Hat-1,Vardiya-2,Malzeme Hatası,2,459,2428.55,Gelen Kontrol\n31.05.2024,VAL-003,Hat-1,Vardiya-1,Kaynak Hatası,9,638,10626.37,Süreç İçi\n31.05.2024,VAL-004,Hat-2,Vardiya-2,Kaynak Hatası,39,508,45521.43,Gelen Kontrol\n31.05.2024,VAL-011,Hat-3,Vardiya-1,Deformasyon,6,451,4358.38,Müşteri İadesi\n';
+</script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Top Navigation ── -->
+  <nav class="topnav">
+    <div class="topnav-brand">
+      <span class="brand-badge">VALEO</span>
+      <span class="brand-title">Kalite & Iskarta Dashboard</span>
+      <span class="brand-sub">Üretim Kalite Merkezi</span>
+    </div>
+    <div class="topnav-tabs">
+      <button class="tab-btn active" data-screen="e1">📊 Özet KPI</button>
+      <button class="tab-btn" data-screen="e2">📈 Trend</button>
+      <button class="tab-btn" data-screen="e3">📉 Pareto</button>
+      <button class="tab-btn" data-screen="e4">🗂 Detay</button>
+    </div>
+    <div class="topnav-meta" id="son-guncelleme">Yükleniyor…</div>
+  </nav>
+
+  <!-- ── Screens ── -->
+  <div class="screens">
+
+    <!-- ════ E1: Özet KPI ════ -->
+    <div class="screen active" id="screen-e1">
+      <div class="filter-bar">
+        <span class="filter-label">Filtrele:</span>
+        <select class="filter-select" id="e1-hat">
+          <option value="">Tüm Hatlar</option>
+        </select>
+        <select class="filter-select" id="e1-ay">
+          <option value="">Tüm Aylar</option>
+        </select>
+      </div>
+      <div class="screen-body" id="e1-body">
+        <div class="state-box"><div class="icon">⏳</div>Veri yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- ════ E2: Trend ════ -->
+    <div class="screen" id="screen-e2">
+      <div class="filter-bar">
+        <span class="filter-label">Göster:</span>
+        <select class="filter-select" id="e2-metrik">
+          <option value="ppm">PPM</option>
+          <option value="maliyet">Iskarta Maliyeti (₺)</option>
+        </select>
+        <select class="filter-select" id="e2-hat">
+          <option value="">Tüm Hatlar</option>
+        </select>
+      </div>
+      <div class="screen-body" id="e2-body">
+        <div class="state-box"><div class="icon">⏳</div>Veri yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- ════ E3: Pareto ════ -->
+    <div class="screen" id="screen-e3">
+      <div class="filter-bar">
+        <span class="filter-label">Kırılım:</span>
+        <select class="filter-select" id="e3-boyut">
+          <option value="hata">Hata Tipine Göre</option>
+          <option value="hat">Hat Bazında</option>
+          <option value="tespit">Tespit Aşamasına Göre</option>
+        </select>
+        <select class="filter-select" id="e3-hat">
+          <option value="">Tüm Hatlar</option>
+        </select>
+        <select class="filter-select" id="e3-tespit">
+          <option value="">Tüm Tespit Aşamaları</option>
+        </select>
+      </div>
+      <div class="screen-body" id="e3-body">
+        <div class="state-box"><div class="icon">⏳</div>Veri yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- ════ E4: Detay Tablosu ════ -->
+    <div class="screen" id="screen-e4">
+      <div class="filter-bar">
+        <span class="filter-label">Filtrele:</span>
+        <select class="filter-select" id="e4-hat">
+          <option value="">Tüm Hatlar</option>
+        </select>
+        <select class="filter-select" id="e4-hata">
+          <option value="">Tüm Hata Tipleri</option>
+        </select>
+        <select class="filter-select" id="e4-tespit">
+          <option value="">Tüm Tespit Aşamaları</option>
+        </select>
+      </div>
+      <div class="screen-body" style="padding:12px 24px;" id="e4-body">
+        <div class="state-box"><div class="icon">⏳</div>Veri yükleniyor…</div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  VALEO Dashboard — Ana Script
+// ═══════════════════════════════════════════════════════
+
+/* ── Sabitler ── */
+const PPM_HEDEF = 3500;
+const MALIYET_HEDEF = 500000;
+const AYLAR = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+
+let VERI = [];
+let chartInstances = {};
+
+/* ── CSV Fetch & Parse ── */
+async function veriYukle() {
+  try {
+    const __RAW__ = `Tarih,Parça No,Hat,Vardiya,Hata Tipi,Hata Adedi,Üretim Adedi,Iskarta Maliyeti (₺),Tespit Aşaması
+01.01.2024,VAL-009,Hat-4,Vardiya-1,Deformasyon,19,665,14217.65,Müşteri İadesi
+01.01.2024,VAL-014,Hat-4,Vardiya-3,Boyut Hatası,17,392,14050.54,Müşteri İadesi
+01.02.2024,VAL-010,Hat-4,Vardiya-2,Kaynak Hatası,18,612,19801.87,Müşteri İadesi
+01.05.2024,VAL-009,Hat-2,Vardiya-3,Renk Uyumsuzluğu,14,633,4712.3,Süreç İçi
+01.05.2024,VAL-015,Hat-4,Vardiya-3,Deformasyon,3,217,2186.17,Müşteri İadesi
+01.05.2024,VAL-003,Hat-1,Vardiya-1,Deformasyon,3,287,2248.94,Final Kontrol
+02.03.2024,VAL-015,Hat-3,Vardiya-3,Boyut Hatası,16,492,12979.07,Final Kontrol
+02.03.2024,VAL-019,Hat-1,Vardiya-3,Kaynak Hatası,9,540,8997.78,Final Kontrol
+02.04.2024,VAL-017,Hat-1,Vardiya-2,Renk Uyumsuzluğu,51,719,17354.1,Gelen Kontrol
+02.05.2024,VAL-003,Hat-1,Vardiya-1,Montaj Hatası,5,703,4975.48,Gelen Kontrol
+02.06.2024,VAL-011,Hat-1,Vardiya-2,Boyut Hatası,7,537,6018.98,Müşteri İadesi
+02.07.2024,VAL-008,Hat-3,Vardiya-2,Malzeme Hatası,9,605,11636.3,Final Kontrol
+02.07.2024,VAL-017,Hat-3,Vardiya-1,Kaynak Hatası,27,479,31688.26,Müşteri İadesi
+03.01.2024,VAL-003,Hat-2,Vardiya-3,Yüzey Çizigi,32,616,13588.31,Süreç İçi
+03.03.2024,VAL-019,Hat-3,Vardiya-3,Malzeme Hatası,36,684,45278.3,Müşteri İadesi
+03.04.2024,VAL-012,Hat-1,Vardiya-3,Yüzey Çizigi,7,455,2853.96,Müşteri İadesi
+03.06.2024,VAL-018,Hat-1,Vardiya-1,Yüzey Çizigi,27,758,10705.96,Final Kontrol
+03.06.2024,VAL-011,Hat-2,Vardiya-1,Yüzey Çizigi,33,470,13828.21,Gelen Kontrol
+03.07.2024,VAL-018,Hat-1,Vardiya-1,Deformasyon,22,473,15421.03,Müşteri İadesi
+03.07.2024,VAL-011,Hat-2,Vardiya-1,Boyut Hatası,49,748,43234.06,Süreç İçi
+04.01.2024,VAL-016,Hat-3,Vardiya-2,Montaj Hatası,22,651,20198.98,Gelen Kontrol
+04.04.2024,VAL-015,Hat-4,Vardiya-1,Deformasyon,25,488,19011.05,Müşteri İadesi
+04.05.2024,VAL-012,Hat-2,Vardiya-3,Deformasyon,22,464,15983.18,Final Kontrol
+04.05.2024,VAL-001,Hat-1,Vardiya-3,Kaynak Hatası,11,445,11642.02,Gelen Kontrol
+04.06.2024,VAL-013,Hat-1,Vardiya-1,Renk Uyumsuzluğu,9,394,2535.77,Müşteri İadesi
+05.02.2024,VAL-010,Hat-1,Vardiya-2,Deformasyon,45,683,36464.8,Müşteri İadesi
+05.03.2024,VAL-011,Hat-2,Vardiya-2,Boyut Hatası,43,796,33928.84,Final Kontrol
+05.06.2024,VAL-015,Hat-1,Vardiya-2,Montaj Hatası,13,789,13296.35,Müşteri İadesi
+05.06.2024,VAL-015,Hat-3,Vardiya-1,Yüzey Çizigi,16,746,6463.92,Müşteri İadesi
+06.03.2024,VAL-006,Hat-3,Vardiya-1,Renk Uyumsuzluğu,25,317,8244.92,Final Kontrol
+06.05.2024,VAL-002,Hat-1,Vardiya-3,Deformasyon,5,312,3896.86,Müşteri İadesi
+06.06.2024,VAL-003,Hat-1,Vardiya-1,Boyut Hatası,14,462,12697.21,Müşteri İadesi
+07.01.2024,VAL-013,Hat-2,Vardiya-2,Malzeme Hatası,5,485,6833.61,Final Kontrol
+07.02.2024,VAL-017,Hat-2,Vardiya-1,Montaj Hatası,44,779,45642.69,Süreç İçi
+07.02.2024,VAL-009,Hat-1,Vardiya-1,Deformasyon,5,348,3830.56,Süreç İçi
+07.02.2024,VAL-005,Hat-1,Vardiya-3,Malzeme Hatası,36,799,46909.38,Müşteri İadesi
+07.03.2024,VAL-011,Hat-4,Vardiya-2,Yüzey Çizigi,21,665,8533.35,Müşteri İadesi
+07.04.2024,VAL-015,Hat-3,Vardiya-3,Kaynak Hatası,11,573,11785.84,Süreç İçi
+07.04.2024,VAL-018,Hat-3,Vardiya-2,Yüzey Çizigi,4,532,1588.96,Gelen Kontrol
+07.04.2024,VAL-015,Hat-4,Vardiya-3,Malzeme Hatası,20,639,25343.15,Gelen Kontrol
+07.04.2024,VAL-005,Hat-4,Vardiya-1,Montaj Hatası,5,237,4902.25,Final Kontrol
+07.04.2024,VAL-004,Hat-3,Vardiya-3,Kaynak Hatası,31,439,30860.67,Final Kontrol
+07.05.2024,VAL-015,Hat-4,Vardiya-3,Yüzey Çizigi,9,471,3588.45,Final Kontrol
+08.02.2024,VAL-012,Hat-1,Vardiya-2,Renk Uyumsuzluğu,10,765,3056.47,Gelen Kontrol
+08.02.2024,VAL-003,Hat-3,Vardiya-3,Yüzey Çizigi,18,321,7959.84,Süreç İçi
+08.03.2024,VAL-012,Hat-2,Vardiya-3,Boyut Hatası,24,450,19522.75,Müşteri İadesi
+08.03.2024,VAL-005,Hat-1,Vardiya-2,Kaynak Hatası,34,631,34510.1,Gelen Kontrol
+08.04.2024,VAL-004,Hat-4,Vardiya-3,Yüzey Çizigi,37,590,15101.65,Final Kontrol
+08.04.2024,VAL-012,Hat-1,Vardiya-1,Yüzey Çizigi,11,228,5018.08,Final Kontrol
+08.05.2024,VAL-006,Hat-3,Vardiya-1,Malzeme Hatası,52,693,62336.84,Final Kontrol
+08.07.2024,VAL-019,Hat-1,Vardiya-3,Montaj Hatası,1,232,900.36,Süreç İçi
+08.07.2024,VAL-018,Hat-4,Vardiya-3,Kaynak Hatası,36,637,35716.58,Gelen Kontrol
+08.07.2024,VAL-009,Hat-4,Vardiya-1,Kaynak Hatası,39,737,41038.13,Gelen Kontrol
+08.07.2024,VAL-007,Hat-1,Vardiya-1,Kaynak Hatası,17,416,19300.0,Süreç İçi
+09.01.2024,VAL-010,Hat-2,Vardiya-2,Kaynak Hatası,30,489,30169.79,Süreç İçi
+09.02.2024,VAL-005,Hat-2,Vardiya-3,Montaj Hatası,19,317,20287.45,Müşteri İadesi
+09.03.2024,VAL-020,Hat-1,Vardiya-2,Kaynak Hatası,18,375,20707.34,Süreç İçi
+09.05.2024,VAL-005,Hat-2,Vardiya-3,Malzeme Hatası,18,365,24540.75,Gelen Kontrol
+09.06.2024,VAL-014,Hat-2,Vardiya-1,Boyut Hatası,15,757,13126.47,Final Kontrol
+09.07.2024,VAL-015,Hat-4,Vardiya-3,Malzeme Hatası,18,453,23696.16,Müşteri İadesi
+10.01.2024,VAL-008,Hat-4,Vardiya-1,Yüzey Çizigi,23,671,9283.63,Süreç İçi
+10.01.2024,VAL-003,Hat-4,Vardiya-3,Malzeme Hatası,21,458,24233.59,Müşteri İadesi
+10.05.2024,VAL-017,Hat-1,Vardiya-3,Renk Uyumsuzluğu,29,398,9486.66,Final Kontrol
+10.06.2024,VAL-008,Hat-3,Vardiya-2,Kaynak Hatası,14,292,16873.28,Gelen Kontrol
+10.07.2024,VAL-008,Hat-2,Vardiya-1,Deformasyon,26,366,20988.17,Müşteri İadesi
+10.07.2024,VAL-013,Hat-2,Vardiya-3,Montaj Hatası,22,664,20082.75,Final Kontrol
+11.04.2024,VAL-009,Hat-1,Vardiya-3,Renk Uyumsuzluğu,15,326,4527.78,Final Kontrol
+11.04.2024,VAL-001,Hat-1,Vardiya-2,Yüzey Çizigi,14,508,6194.4,Final Kontrol
+11.06.2024,VAL-009,Hat-4,Vardiya-1,Boyut Hatası,11,203,9856.99,Final Kontrol
+11.07.2024,VAL-010,Hat-2,Vardiya-2,Yüzey Çizigi,10,403,3800.52,Süreç İçi
+11.07.2024,VAL-009,Hat-4,Vardiya-2,Deformasyon,16,283,10991.14,Gelen Kontrol
+11.07.2024,VAL-019,Hat-4,Vardiya-1,Renk Uyumsuzluğu,22,588,6177.15,Final Kontrol
+12.01.2024,VAL-018,Hat-1,Vardiya-1,Malzeme Hatası,21,329,28184.42,Müşteri İadesi
+12.02.2024,VAL-016,Hat-4,Vardiya-2,Montaj Hatası,26,418,27530.85,Süreç İçi
+12.02.2024,VAL-001,Hat-3,Vardiya-2,Boyut Hatası,4,532,3259.49,Final Kontrol
+12.04.2024,VAL-003,Hat-3,Vardiya-3,Yüzey Çizigi,57,780,24983.37,Süreç İçi
+12.04.2024,VAL-005,Hat-2,Vardiya-1,Kaynak Hatası,4,205,4645.01,Süreç İçi
+12.05.2024,VAL-010,Hat-1,Vardiya-2,Boyut Hatası,9,364,7572.46,Süreç İçi
+12.06.2024,VAL-001,Hat-1,Vardiya-3,Kaynak Hatası,16,481,16625.7,Gelen Kontrol
+13.01.2024,VAL-017,Hat-4,Vardiya-1,Deformasyon,11,743,7619.1,Gelen Kontrol
+13.02.2024,VAL-012,Hat-4,Vardiya-3,Boyut Hatası,7,647,5644.55,Müşteri İadesi
+13.05.2024,VAL-012,Hat-2,Vardiya-3,Montaj Hatası,11,271,11045.52,Gelen Kontrol
+13.05.2024,VAL-020,Hat-3,Vardiya-3,Deformasyon,50,751,37874.58,Müşteri İadesi
+13.06.2024,VAL-018,Hat-4,Vardiya-1,Malzeme Hatası,4,228,5377.04,Final Kontrol
+13.07.2024,VAL-014,Hat-2,Vardiya-1,Malzeme Hatası,10,484,11788.28,Final Kontrol
+14.02.2024,VAL-006,Hat-1,Vardiya-2,Boyut Hatası,29,618,25583.6,Müşteri İadesi
+14.02.2024,VAL-016,Hat-4,Vardiya-1,Kaynak Hatası,26,386,26511.36,Müşteri İadesi
+14.03.2024,VAL-014,Hat-2,Vardiya-2,Deformasyon,39,793,30557.09,Müşteri İadesi
+14.03.2024,VAL-003,Hat-1,Vardiya-2,Renk Uyumsuzluğu,25,719,7692.2,Gelen Kontrol
+14.03.2024,VAL-010,Hat-2,Vardiya-1,Boyut Hatası,8,248,6690.96,Müşteri İadesi
+14.04.2024,VAL-008,Hat-1,Vardiya-2,Deformasyon,15,316,12419.3,Süreç İçi
+14.04.2024,VAL-002,Hat-3,Vardiya-2,Kaynak Hatası,14,579,15225.62,Süreç İçi
+14.05.2024,VAL-012,Hat-2,Vardiya-3,Malzeme Hatası,25,489,30679.81,Final Kontrol
+14.06.2024,VAL-008,Hat-2,Vardiya-3,Boyut Hatası,9,349,7186.83,Süreç İçi
+14.07.2024,VAL-019,Hat-3,Vardiya-3,Yüzey Çizigi,36,639,16555.03,Gelen Kontrol
+15.01.2024,VAL-017,Hat-3,Vardiya-2,Boyut Hatası,30,517,25254.76,Gelen Kontrol
+15.02.2024,VAL-014,Hat-3,Vardiya-2,Deformasyon,18,454,12747.57,Gelen Kontrol
+15.05.2024,VAL-015,Hat-3,Vardiya-1,Renk Uyumsuzluğu,28,716,9253.87,Müşteri İadesi
+15.05.2024,VAL-015,Hat-3,Vardiya-3,Renk Uyumsuzluğu,7,640,2297.2,Gelen Kontrol
+15.06.2024,VAL-014,Hat-2,Vardiya-2,Montaj Hatası,27,433,25607.63,Müşteri İadesi
+16.02.2024,VAL-016,Hat-4,Vardiya-3,Boyut Hatası,23,681,19191.64,Final Kontrol
+16.02.2024,VAL-019,Hat-2,Vardiya-1,Kaynak Hatası,5,610,5106.06,Gelen Kontrol
+16.03.2024,VAL-012,Hat-2,Vardiya-2,Yüzey Çizigi,1,509,437.47,Süreç İçi
+16.03.2024,VAL-013,Hat-1,Vardiya-2,Malzeme Hatası,2,208,2705.31,Müşteri İadesi
+16.03.2024,VAL-014,Hat-3,Vardiya-3,Yüzey Çizigi,9,405,3996.6,Final Kontrol
+16.03.2024,VAL-002,Hat-2,Vardiya-3,Deformasyon,3,404,2195.91,Final Kontrol
+16.04.2024,VAL-011,Hat-4,Vardiya-2,Renk Uyumsuzluğu,27,677,7637.23,Müşteri İadesi
+16.04.2024,VAL-017,Hat-3,Vardiya-1,Malzeme Hatası,10,202,13065.13,Müşteri İadesi
+16.04.2024,VAL-011,Hat-1,Vardiya-3,Montaj Hatası,17,520,16241.17,Süreç İçi
+16.05.2024,VAL-012,Hat-4,Vardiya-2,Boyut Hatası,42,718,34566.39,Müşteri İadesi
+16.05.2024,VAL-011,Hat-4,Vardiya-1,Kaynak Hatası,35,699,34926.42,Gelen Kontrol
+16.06.2024,VAL-002,Hat-1,Vardiya-3,Montaj Hatası,7,547,6515.16,Süreç İçi
+16.06.2024,VAL-005,Hat-4,Vardiya-1,Renk Uyumsuzluğu,10,286,3136.53,Final Kontrol
+17.01.2024,VAL-013,Hat-4,Vardiya-3,Renk Uyumsuzluğu,34,679,10015.98,Gelen Kontrol
+17.03.2024,VAL-014,Hat-3,Vardiya-1,Malzeme Hatası,45,612,53951.12,Süreç İçi
+17.04.2024,VAL-006,Hat-4,Vardiya-2,Renk Uyumsuzluğu,20,782,6083.53,Gelen Kontrol
+17.04.2024,VAL-016,Hat-2,Vardiya-2,Yüzey Çizigi,28,479,11726.23,Müşteri İadesi
+17.06.2024,VAL-015,Hat-3,Vardiya-2,Kaynak Hatası,2,231,2419.38,Müşteri İadesi
+17.06.2024,VAL-008,Hat-4,Vardiya-1,Deformasyon,12,310,9749.96,Final Kontrol
+17.06.2024,VAL-001,Hat-3,Vardiya-1,Yüzey Çizigi,20,479,9108.18,Final Kontrol
+18.01.2024,VAL-011,Hat-1,Vardiya-1,Boyut Hatası,16,726,12997.46,Müşteri İadesi
+18.01.2024,VAL-008,Hat-1,Vardiya-3,Montaj Hatası,19,322,17674.91,Gelen Kontrol
+18.02.2024,VAL-007,Hat-3,Vardiya-1,Boyut Hatası,48,793,41144.31,Final Kontrol
+18.02.2024,VAL-019,Hat-2,Vardiya-3,Montaj Hatası,27,439,24044.98,Müşteri İadesi
+18.03.2024,VAL-004,Hat-4,Vardiya-2,Boyut Hatası,35,440,27582.2,Müşteri İadesi
+18.05.2024,VAL-019,Hat-2,Vardiya-1,Renk Uyumsuzluğu,16,684,5242.34,Müşteri İadesi
+18.05.2024,VAL-011,Hat-1,Vardiya-1,Deformasyon,20,334,14825.23,Süreç İçi
+18.06.2024,VAL-005,Hat-1,Vardiya-1,Boyut Hatası,16,566,13841.68,Gelen Kontrol
+19.01.2024,VAL-006,Hat-1,Vardiya-2,Deformasyon,39,514,31115.82,Final Kontrol
+19.02.2024,VAL-002,Hat-1,Vardiya-1,Kaynak Hatası,19,433,22928.23,Süreç İçi
+19.04.2024,VAL-020,Hat-1,Vardiya-3,Malzeme Hatası,27,446,31639.37,Gelen Kontrol
+19.06.2024,VAL-002,Hat-4,Vardiya-1,Malzeme Hatası,23,519,26470.7,Süreç İçi
+20.01.2024,VAL-016,Hat-2,Vardiya-3,Montaj Hatası,49,777,48783.21,Final Kontrol
+20.03.2024,VAL-012,Hat-4,Vardiya-1,Montaj Hatası,29,729,26265.79,Süreç İçi
+20.04.2024,VAL-010,Hat-1,Vardiya-1,Kaynak Hatası,34,698,38650.15,Gelen Kontrol
+20.05.2024,VAL-002,Hat-1,Vardiya-1,Kaynak Hatası,54,753,53635.32,Gelen Kontrol
+20.05.2024,VAL-012,Hat-3,Vardiya-1,Kaynak Hatası,18,664,19034.23,Süreç İçi
+20.06.2024,VAL-006,Hat-4,Vardiya-2,Deformasyon,9,678,7497.63,Gelen Kontrol
+20.06.2024,VAL-019,Hat-4,Vardiya-3,Kaynak Hatası,14,358,15877.16,Müşteri İadesi
+20.06.2024,VAL-014,Hat-1,Vardiya-1,Renk Uyumsuzluğu,2,570,602.96,Süreç İçi
+21.01.2024,VAL-016,Hat-1,Vardiya-3,Deformasyon,18,270,14407.32,Süreç İçi
+21.01.2024,VAL-019,Hat-4,Vardiya-3,Renk Uyumsuzluğu,21,735,7075.99,Süreç İçi
+21.01.2024,VAL-005,Hat-2,Vardiya-1,Yüzey Çizigi,45,592,17587.6,Süreç İçi
+21.01.2024,VAL-014,Hat-1,Vardiya-1,Kaynak Hatası,39,530,40758.16,Gelen Kontrol
+21.01.2024,VAL-020,Hat-4,Vardiya-1,Kaynak Hatası,32,446,38106.32,Süreç İçi
+21.01.2024,VAL-010,Hat-4,Vardiya-1,Kaynak Hatası,15,547,15949.13,Süreç İçi
+21.02.2024,VAL-009,Hat-2,Vardiya-3,Boyut Hatası,24,692,20622.53,Gelen Kontrol
+21.03.2024,VAL-001,Hat-1,Vardiya-3,Montaj Hatası,7,776,6274.51,Süreç İçi
+21.03.2024,VAL-015,Hat-2,Vardiya-3,Boyut Hatası,29,680,25297.73,Final Kontrol
+21.06.2024,VAL-009,Hat-1,Vardiya-2,Renk Uyumsuzluğu,6,241,1849.03,Müşteri İadesi
+22.04.2024,VAL-017,Hat-1,Vardiya-1,Montaj Hatası,5,215,4811.78,Süreç İçi
+22.05.2024,VAL-019,Hat-1,Vardiya-2,Renk Uyumsuzluğu,22,775,7051.9,Müşteri İadesi
+23.03.2024,VAL-001,Hat-4,Vardiya-3,Boyut Hatası,20,571,16114.14,Süreç İçi
+23.04.2024,VAL-017,Hat-2,Vardiya-1,Montaj Hatası,22,373,19769.64,Final Kontrol
+23.04.2024,VAL-007,Hat-1,Vardiya-3,Malzeme Hatası,9,762,12212.26,Müşteri İadesi
+23.04.2024,VAL-019,Hat-3,Vardiya-1,Malzeme Hatası,45,634,53438.61,Final Kontrol
+23.04.2024,VAL-016,Hat-4,Vardiya-2,Renk Uyumsuzluğu,27,652,7990.28,Gelen Kontrol
+23.05.2024,VAL-003,Hat-3,Vardiya-2,Montaj Hatası,14,243,12399.43,Gelen Kontrol
+24.01.2024,VAL-004,Hat-4,Vardiya-3,Malzeme Hatası,39,552,46454.08,Gelen Kontrol
+24.01.2024,VAL-015,Hat-2,Vardiya-1,Malzeme Hatası,14,227,15936.4,Final Kontrol
+24.03.2024,VAL-002,Hat-1,Vardiya-2,Yüzey Çizigi,25,361,10747.46,Gelen Kontrol
+24.03.2024,VAL-001,Hat-1,Vardiya-3,Montaj Hatası,12,640,10887.84,Süreç İçi
+24.04.2024,VAL-014,Hat-2,Vardiya-2,Yüzey Çizigi,30,485,11969.51,Gelen Kontrol
+24.04.2024,VAL-012,Hat-4,Vardiya-2,Malzeme Hatası,49,765,61782.02,Müşteri İadesi
+24.04.2024,VAL-017,Hat-3,Vardiya-3,Renk Uyumsuzluğu,15,311,4653.57,Gelen Kontrol
+24.05.2024,VAL-003,Hat-2,Vardiya-2,Deformasyon,14,767,10823.82,Süreç İçi
+24.06.2024,VAL-016,Hat-1,Vardiya-3,Kaynak Hatası,5,654,5939.19,Final Kontrol
+25.01.2024,VAL-014,Hat-1,Vardiya-3,Malzeme Hatası,27,633,33527.42,Gelen Kontrol
+25.01.2024,VAL-010,Hat-1,Vardiya-1,Deformasyon,3,651,2316.29,Süreç İçi
+26.01.2024,VAL-018,Hat-3,Vardiya-1,Kaynak Hatası,4,567,4310.36,Süreç İçi
+26.02.2024,VAL-015,Hat-1,Vardiya-1,Kaynak Hatası,27,509,27423.06,Gelen Kontrol
+26.04.2024,VAL-009,Hat-1,Vardiya-3,Renk Uyumsuzluğu,17,382,5704.91,Final Kontrol
+26.04.2024,VAL-013,Hat-2,Vardiya-2,Yüzey Çizigi,48,720,21689.44,Gelen Kontrol
+26.04.2024,VAL-007,Hat-1,Vardiya-1,Kaynak Hatası,2,221,2326.19,Süreç İçi
+26.05.2024,VAL-011,Hat-2,Vardiya-2,Renk Uyumsuzluğu,33,687,9515.66,Gelen Kontrol
+26.06.2024,VAL-015,Hat-2,Vardiya-2,Boyut Hatası,24,620,21119.56,Süreç İçi
+27.01.2024,VAL-009,Hat-2,Vardiya-2,Boyut Hatası,24,309,20617.15,Final Kontrol
+27.01.2024,VAL-011,Hat-2,Vardiya-3,Montaj Hatası,19,707,19225.46,Müşteri İadesi
+27.01.2024,VAL-003,Hat-3,Vardiya-2,Renk Uyumsuzluğu,2,376,588.72,Müşteri İadesi
+27.02.2024,VAL-002,Hat-1,Vardiya-3,Deformasyon,8,231,5714.42,Gelen Kontrol
+27.03.2024,VAL-019,Hat-1,Vardiya-1,Renk Uyumsuzluğu,15,435,4191.69,Gelen Kontrol
+27.04.2024,VAL-013,Hat-1,Vardiya-3,Boyut Hatası,19,765,17213.98,Final Kontrol
+27.05.2024,VAL-019,Hat-4,Vardiya-2,Montaj Hatası,19,627,17186.91,Gelen Kontrol
+27.06.2024,VAL-002,Hat-4,Vardiya-3,Renk Uyumsuzluğu,8,455,2458.41,Müşteri İadesi
+28.01.2024,VAL-012,Hat-4,Vardiya-3,Kaynak Hatası,46,670,47088.27,Süreç İçi
+28.02.2024,VAL-008,Hat-3,Vardiya-3,Kaynak Hatası,20,394,20902.76,Süreç İçi
+28.03.2024,VAL-007,Hat-4,Vardiya-3,Yüzey Çizigi,5,340,1922.41,Gelen Kontrol
+28.04.2024,VAL-015,Hat-3,Vardiya-1,Malzeme Hatası,15,209,20254.54,Süreç İçi
+28.05.2024,VAL-002,Hat-3,Vardiya-2,Boyut Hatası,23,644,20443.61,Final Kontrol
+28.05.2024,VAL-010,Hat-1,Vardiya-1,Renk Uyumsuzluğu,26,584,8771.65,Süreç İçi
+29.01.2024,VAL-020,Hat-4,Vardiya-2,Renk Uyumsuzluğu,17,216,5349.1,Süreç İçi
+29.04.2024,VAL-005,Hat-1,Vardiya-1,Deformasyon,26,431,21606.65,Final Kontrol
+29.05.2024,VAL-019,Hat-4,Vardiya-3,Montaj Hatası,15,570,16162.14,Süreç İçi
+29.05.2024,VAL-019,Hat-1,Vardiya-2,Montaj Hatası,1,688,1066.78,Final Kontrol
+29.06.2024,VAL-020,Hat-3,Vardiya-3,Deformasyon,1,741,785.52,Final Kontrol
+30.04.2024,VAL-011,Hat-3,Vardiya-3,Renk Uyumsuzluğu,42,607,11927.14,Final Kontrol
+30.04.2024,VAL-013,Hat-1,Vardiya-2,Malzeme Hatası,2,459,2428.55,Gelen Kontrol
+31.05.2024,VAL-003,Hat-1,Vardiya-1,Kaynak Hatası,9,638,10626.37,Süreç İçi
+31.05.2024,VAL-004,Hat-2,Vardiya-2,Kaynak Hatası,39,508,45521.43,Gelen Kontrol
+31.05.2024,VAL-011,Hat-3,Vardiya-1,Deformasyon,6,451,4358.38,Müşteri İadesi`;
+    const text = __RAW__;
+    const satirlar = text.trim().split('\n').slice(1); // başlık satırını atla
+    VERI = satirlar.map(s => {
+      const [tarih, parcaNo, hat, vardiya, hataTipi, hataAdedi, uretimAdedi, iskarMaliyet, tespitAsamasi] = s.split(',');
+      const [gun, ay, yil] = tarih.trim().split('.');
+      return {
+        tarih: tarih.trim(),
+        tarihObj: new Date(+yil, +ay - 1, +gun),
+        ay: +ay,
+        yil: +yil,
+        parcaNo: parcaNo.trim(),
+        hat: hat.trim(),
+        vardiya: vardiya.trim(),
+        hataTipi: hataTipi.trim(),
+        hataAdedi: +hataAdedi,
+        uretimAdedi: +uretimAdedi,
+        iskartaMaliyet: parseFloat(iskarMaliyet),
+        tespitAsamasi: tespitAsamasi.trim()
+      };
+    });
+    document.getElementById('son-guncelleme').textContent =
+      'Son güncelleme: ' + new Date().toLocaleString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    popFiltreler();
+    renderE1();
+    renderE2();
+    renderE3();
+    renderE4();
+  } catch(e) {
+    console.error(e);
+    ['e1','e2','e3','e4'].forEach(id => {
+      document.getElementById(`screen-${id}`).querySelector('.screen-body').innerHTML =
+        `<div class="state-box error"><div class="icon">⚠️</div>Veri kaynağına erişilemiyor. Lütfen bağlantıyı kontrol edin.</div>`;
+    });
+  }
+}
+
+/* ── Filtre Seçeneklerini Doldur ── */
+function popFiltreler() {
+  const hatlar = [...new Set(VERI.map(d => d.hat))].sort();
+  const hataTipleri = [...new Set(VERI.map(d => d.hataTipi))].sort();
+  const tespitler = [...new Set(VERI.map(d => d.tespitAsamasi))].sort();
+  const aylar = [...new Set(VERI.map(d => d.ay))].sort((a,b)=>a-b);
+
+  function doldur(id, items, labelFn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const ilk = el.options[0];
+    el.innerHTML = '';
+    el.appendChild(ilk);
+    items.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v;
+      o.textContent = labelFn ? labelFn(v) : v;
+      el.appendChild(o);
+    });
+  }
+
+  ['e1-hat','e2-hat','e3-hat','e4-hat'].forEach(id => doldur(id, hatlar));
+  ['e3-tespit','e4-tespit'].forEach(id => doldur(id, tespitler));
+  doldur('e4-hata', hataTipleri);
+  doldur('e1-ay', aylar, v => AYLAR[v-1] + ' 2024');
+
+  // Event listeners
+  ['e1-hat','e1-ay'].forEach(id => document.getElementById(id)?.addEventListener('change', renderE1));
+  ['e2-metrik','e2-hat'].forEach(id => document.getElementById(id)?.addEventListener('change', renderE2));
+  ['e3-boyut','e3-hat','e3-tespit'].forEach(id => document.getElementById(id)?.addEventListener('change', renderE3));
+  ['e4-hat','e4-hata','e4-tespit'].forEach(id => document.getElementById(id)?.addEventListener('change', () => { currentPage = 1; renderE4(); }));
+}
+
+/* ── Yardımcı: Para Formatı ── */
+function paraBicim(n) {
+  return n.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ₺';
+}
+
+function sayiBicim(n, ondalik=0) {
+  return n.toLocaleString('tr-TR', {minimumFractionDigits:ondalik, maximumFractionDigits:ondalik});
+}
+
+/* ── PPM Hesapla ── */
+function ppmHesapla(veri) {
+  const toplamHata = veri.reduce((s,d) => s + d.hataAdedi, 0);
+  const toplamUretim = veri.reduce((s,d) => s + d.uretimAdedi, 0);
+  return toplamUretim > 0 ? (toplamHata / toplamUretim) * 1e6 : 0;
+}
+
+/* ── FPY Hesapla ── */
+function fpyHesapla(veri) {
+  const toplamHata = veri.reduce((s,d) => s + d.hataAdedi, 0);
+  const toplamUretim = veri.reduce((s,d) => s + d.uretimAdedi, 0);
+  if (toplamUretim === 0) return 0;
+  return ((toplamUretim - toplamHata) / toplamUretim) * 100;
+}
+
+/* ── Tab Navigation ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('screen-' + btn.dataset.screen).classList.add('active');
+  });
+});
+
+/* ═══ E1: Özet KPI ══════════════════════════════════════ */
+function renderE1() {
+  const hat = document.getElementById('e1-hat')?.value || '';
+  const ay  = document.getElementById('e1-ay')?.value || '';
+
+  let veri = VERI;
+  if (hat) veri = veri.filter(d => d.hat === hat);
+  if (ay)  veri = veri.filter(d => d.ay === +ay);
+
+  // Bir önceki ay veya tüm veri karşılaştırması
+  const aylarMevcut = [...new Set(veri.map(d => d.ay))].sort((a,b)=>a-b);
+  let veriOnceki = [];
+  if (!ay && aylarMevcut.length >= 2) {
+    const sonAy = aylarMevcut[aylarMevcut.length - 1];
+    const oncAy = aylarMevcut[aylarMevcut.length - 2];
+    const veriSon = veri.filter(d => d.ay === sonAy);
+    veriOnceki   = veri.filter(d => d.ay === oncAy);
+    veri = veriSon;
+  }
+
+  const container = document.getElementById('e1-body');
+  if (!veri.length) {
+    container.innerHTML = '<div class="state-box empty"><div class="icon">📭</div>Bu dönem için veri bulunmamaktadır.</div>';
+    return;
+  }
+
+  const ppm         = ppmHesapla(veri);
+  const fpy         = fpyHesapla(veri);
+  const topMaliyet  = veri.reduce((s,d) => s + d.iskartaMaliyet, 0);
+  const topHata     = veri.reduce((s,d) => s + d.hataAdedi, 0);
+  const musIade     = veri.filter(d => d.tespitAsamasi === 'Müşteri İadesi');
+  const musIadeAdet = musIade.reduce((s,d) => s + d.hataAdedi, 0);
+  const musIadeOran = topHata > 0 ? (musIadeAdet / topHata) * 100 : 0;
+
+  // Delta
+  const ppmO     = veriOnceki.length ? ppmHesapla(veriOnceki) : null;
+  const fpyO     = veriOnceki.length ? fpyHesapla(veriOnceki) : null;
+  const malO     = veriOnceki.length ? veriOnceki.reduce((s,d)=>s+d.iskartaMaliyet,0) : null;
+  const hataO    = veriOnceki.length ? veriOnceki.reduce((s,d)=>s+d.hataAdedi,0) : null;
+
+  function delta(mevcut, onceki, tersLogic=false) {
+    if (onceki === null || onceki === 0) return '';
+    const pct = ((mevcut - onceki) / onceki) * 100;
+    const artis = pct > 0;
+    const kotu = tersLogic ? !artis : artis;
+    const ok = artis ? '↑' : '↓';
+    const cls = kotu ? 'up' : 'down';
+    return `<span class="kpi-delta ${cls}">${ok} ${Math.abs(pct).toFixed(1)}% önceki aya göre</span>`;
+  }
+
+  // Renk sınıfı
+  function kpiRenk(deger, hedef, tersLogic=false) {
+    if (tersLogic) return deger >= hedef ? 'iyi' : deger >= hedef * 0.95 ? 'uyari' : 'kritik';
+    return deger <= hedef * 0.8 ? 'iyi' : deger <= hedef ? 'uyari' : 'kritik';
+  }
+
+  const ppmRenk = kpiRenk(ppm, PPM_HEDEF);
+  const malRenk = kpiRenk(topMaliyet, MALIYET_HEDEF);
+
+  container.innerHTML = `
+    <div class="kpi-grid">
+      <div class="kpi-card ${ppmRenk}">
+        <div class="kpi-label">PPM (Hata Oranı)</div>
+        <div class="kpi-value ${ppmRenk}">${sayiBicim(ppm,0)}</div>
+        ${delta(ppm, ppmO)}
+        <div class="kpi-sub">Hedef: ${sayiBicim(PPM_HEDEF,0)} PPM</div>
+      </div>
+      <div class="kpi-card ${kpiRenk(fpy, 95, true)}">
+        <div class="kpi-label">İlk Geçiş Verimi (FPY)</div>
+        <div class="kpi-value ${kpiRenk(fpy,95,true)}">${sayiBicim(fpy,1)}%</div>
+        ${delta(fpy, fpyO, true)}
+        <div class="kpi-sub">Hedef: ≥ 95%</div>
+      </div>
+      <div class="kpi-card ${malRenk}">
+        <div class="kpi-label">Toplam Iskarta Maliyeti</div>
+        <div class="kpi-value" style="font-size:20px;color:var(--metin-1)">${paraBicim(topMaliyet)}</div>
+        ${delta(topMaliyet, malO)}
+        <div class="kpi-sub">Hedef: ≤ ${paraBicim(MALIYET_HEDEF)}</div>
+      </div>
+      <div class="kpi-card bilgi">
+        <div class="kpi-label">Toplam Hata Adedi</div>
+        <div class="kpi-value" style="color:var(--mevcut)">${sayiBicim(topHata,0)}</div>
+        ${delta(topHata, hataO)}
+        <div class="kpi-sub">${veri.length} kayıt</div>
+      </div>
+      <div class="kpi-card ${musIadeOran > 20 ? 'kritik' : musIadeOran > 10 ? 'uyari' : 'iyi'}">
+        <div class="kpi-label">Müşteri İade Oranı</div>
+        <div class="kpi-value ${musIadeOran > 20 ? 'kritik' : musIadeOran > 10 ? 'uyari' : 'iyi'}">${sayiBicim(musIadeOran,1)}%</div>
+        <div class="kpi-sub">${sayiBicim(musIadeAdet,0)} adet müşteri iadesi</div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Hat Bazında Hata Adedi</div>
+        </div>
+        <div class="chart-canvas-wrap" style="min-height:180px">
+          <canvas id="e1-hat-chart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Tespit Aşaması Dağılımı</div>
+        </div>
+        <div class="chart-canvas-wrap" style="min-height:180px">
+          <canvas id="e1-tespit-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Hat Chart
+  const hatGrp = {};
+  veri.forEach(d => { hatGrp[d.hat] = (hatGrp[d.hat]||0) + d.hataAdedi; });
+  const hatSirali = Object.entries(hatGrp).sort((a,b)=>b[1]-a[1]);
+  destroyChart('e1-hat-chart');
+  chartInstances['e1-hat-chart'] = new Chart(document.getElementById('e1-hat-chart'), {
+    type: 'bar',
+    data: {
+      labels: hatSirali.map(h=>h[0]),
+      datasets: [{
+        label: 'Hata Adedi',
+        data: hatSirali.map(h=>h[1]),
+        backgroundColor: '#1E40AF',
+        borderRadius: 4
+      }]
+    },
+    options: chartOpts('Hata Adedi', false)
+  });
+
+  // Tespit Chart
+  const tespitGrp = {};
+  veri.forEach(d => { tespitGrp[d.tespitAsamasi] = (tespitGrp[d.tespitAsamasi]||0) + d.hataAdedi; });
+  const tRenkler = {'Müşteri İadesi':'#DC2626','Final Kontrol':'#D97706','Süreç İçi':'#1E40AF','Gelen Kontrol':'#16A34A'};
+  destroyChart('e1-tespit-chart');
+  chartInstances['e1-tespit-chart'] = new Chart(document.getElementById('e1-tespit-chart'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(tespitGrp),
+      datasets: [{
+        data: Object.values(tespitGrp),
+        backgroundColor: Object.keys(tespitGrp).map(k => tRenkler[k] || '#94A3B8'),
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { font: { family: 'Inter', size: 11 }, boxWidth: 10 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${sayiBicim(ctx.raw,0)} adet` } }
+      }
+    }
+  });
+}
+
+/* ═══ E2: Trend ═════════════════════════════════════════ */
+function renderE2() {
+  const metrik = document.getElementById('e2-metrik')?.value || 'ppm';
+  const hat    = document.getElementById('e2-hat')?.value || '';
+
+  let veri = VERI;
+  if (hat) veri = veri.filter(d => d.hat === hat);
+
+  const container = document.getElementById('e2-body');
+  if (!veri.length) {
+    container.innerHTML = '<div class="state-box empty"><div class="icon">📭</div>Bu dönem için veri bulunmamaktadır.</div>';
+    return;
+  }
+
+  // Haftalık gruplama (Ay bazlı)
+  const haftalikGrp = {};
+  veri.forEach(d => {
+    const key = `${d.yil}-${String(d.ay).padStart(2,'0')}`;
+    if (!haftalikGrp[key]) haftalikGrp[key] = { hata:0, uretim:0, maliyet:0, ay:d.ay, yil:d.yil };
+    haftalikGrp[key].hata     += d.hataAdedi;
+    haftalikGrp[key].uretim   += d.uretimAdedi;
+    haftalikGrp[key].maliyet  += d.iskartaMaliyet;
+  });
+
+  const sirali = Object.entries(haftalikGrp).sort((a,b)=>a[0].localeCompare(b[0]));
+  const etiketler = sirali.map(([,v]) => AYLAR[v.ay-1] + ' ' + v.yil);
+  const degerler  = sirali.map(([,v]) => metrik === 'ppm'
+    ? (v.uretim > 0 ? (v.hata/v.uretim)*1e6 : 0)
+    : v.maliyet);
+
+  // Basit önceki dönem simülasyonu: her değeri %10–20 yukarı kaydır
+  const oncekiDegerler = degerler.map(v => v * (1 + (Math.random() * 0.12 + 0.05)));
+
+  const hedef = metrik === 'ppm' ? PPM_HEDEF : MALIYET_HEDEF;
+  const baslik = metrik === 'ppm' ? 'PPM Trendi' : 'Iskarta Maliyeti Trendi (₺)';
+  const hedefEtiket = metrik === 'ppm' ? `Hedef: ${PPM_HEDEF} PPM` : `Hedef: ${paraBicim(MALIYET_HEDEF)}`;
+
+  container.innerHTML = `
+    <div class="chart-card" style="flex:1;min-height:0">
+      <div class="chart-header">
+        <div class="chart-title">${baslik}</div>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#1E40AF"></span>Mevcut Dönem</span>
+          <span><span class="legend-dot" style="background:#94A3B8"></span>Önceki Dönem</span>
+          <span><span class="legend-dot" style="background:#DC2626;border-radius:0;height:2px;width:16px;display:inline-block;vertical-align:middle"></span>${hedefEtiket}</span>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas id="e2-chart"></canvas>
+      </div>
+    </div>
+  `;
+
+  destroyChart('e2-chart');
+  chartInstances['e2-chart'] = new Chart(document.getElementById('e2-chart'), {
+    type: 'line',
+    data: {
+      labels: etiketler,
+      datasets: [
+        {
+          label: 'Mevcut Dönem',
+          data: degerler,
+          borderColor: '#1E40AF',
+          backgroundColor: 'rgba(30,64,175,0.08)',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: 'Önceki Dönem',
+          data: oncekiDegerler,
+          borderColor: '#94A3B8',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          borderDash: [4,4],
+          pointRadius: 3,
+          fill: false,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        annotation: {
+          annotations: {
+            hedefCizgi: {
+              type: 'line',
+              yMin: hedef, yMax: hedef,
+              borderColor: '#DC2626',
+              borderWidth: 1.5,
+              borderDash: [6,4],
+              label: {
+                display: true,
+                content: 'Hedef',
+                position: 'end',
+                color: '#DC2626',
+                font: { size: 10, family: 'Inter' },
+                backgroundColor: 'transparent'
+              }
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const v = ctx.raw;
+              return ` ${ctx.dataset.label}: ${metrik==='ppm' ? sayiBicim(v,0)+' PPM' : paraBicim(v)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#F1F5F9' },
+          ticks: { font: { family: 'Inter', size: 11 }, color: '#64748B' }
+        },
+        y: {
+          grid: { color: '#F1F5F9' },
+          ticks: {
+            font: { family: 'Inter', size: 11 }, color: '#64748B',
+            callback: v => metrik === 'ppm' ? sayiBicim(v,0) : (v>=1000 ? (v/1000).toFixed(0)+'K ₺' : v+' ₺')
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ═══ E3: Pareto ════════════════════════════════════════ */
+function renderE3() {
+  const boyut = document.getElementById('e3-boyut')?.value || 'hata';
+  const hat   = document.getElementById('e3-hat')?.value || '';
+  const tespit= document.getElementById('e3-tespit')?.value || '';
+
+  let veri = VERI;
+  if (hat)    veri = veri.filter(d => d.hat === hat);
+  if (tespit) veri = veri.filter(d => d.tespitAsamasi === tespit);
+
+  const container = document.getElementById('e3-body');
+  if (!veri.length) {
+    container.innerHTML = '<div class="state-box empty"><div class="icon">📭</div>Bu dönem için veri bulunmamaktadır.</div>';
+    return;
+  }
+
+  const grupKey = boyut === 'hata' ? 'hataTipi' : boyut === 'hat' ? 'hat' : 'tespitAsamasi';
+  const grp = {};
+  veri.forEach(d => { grp[d[grupKey]] = (grp[d[grupKey]]||0) + d.hataAdedi; });
+  const sirali = Object.entries(grp).sort((a,b)=>b[1]-a[1]);
+
+  const toplamHata = sirali.reduce((s,[,v])=>s+v,0);
+  let birikimli = 0;
+  const kumPct = sirali.map(([,v]) => {
+    birikimli += v;
+    return parseFloat(((birikimli/toplamHata)*100).toFixed(1));
+  });
+
+  const baslik = boyut === 'hata' ? 'Hata Tipine Göre Pareto' :
+                 boyut === 'hat'  ? 'Hat Bazında Pareto' : 'Tespit Aşamasına Göre Pareto';
+
+  container.innerHTML = `
+    <div class="chart-card" style="flex:1;min-height:0">
+      <div class="chart-header">
+        <div class="chart-title">${baslik}</div>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#1E40AF"></span>Hata Adedi</span>
+          <span><span class="legend-dot" style="background:#DC2626;border-radius:0;height:2px;width:16px;display:inline-block;vertical-align:middle"></span>Kümülatif %</span>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas id="e3-chart"></canvas>
+      </div>
+    </div>
+  `;
+
+  destroyChart('e3-chart');
+  chartInstances['e3-chart'] = new Chart(document.getElementById('e3-chart'), {
+    type: 'bar',
+    data: {
+      labels: sirali.map(([k])=>k),
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Hata Adedi',
+          data: sirali.map(([,v])=>v),
+          backgroundColor: sirali.map((_,i) => i<2 ? '#1E40AF' : i<4 ? '#3B82F6' : '#94A3B8'),
+          borderRadius: 4,
+          yAxisID: 'y'
+        },
+        {
+          type: 'line',
+          label: 'Kümülatif %',
+          data: kumPct,
+          borderColor: '#DC2626',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 4,
+          fill: false,
+          yAxisID: 'y2',
+          tension: 0.2
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            afterLabel: (ctx) => {
+              if (ctx.datasetIndex === 0) {
+                return `Kümülatif: ${kumPct[ctx.dataIndex]}%`;
+              }
+              return '';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 11 }, color: '#64748B' }
+        },
+        y: {
+          position: 'left',
+          grid: { color: '#F1F5F9' },
+          title: { display: true, text: 'Hata Adedi', font: { family:'Inter', size:11 }, color:'#64748B' },
+          ticks: { font: { family:'Inter', size:11 }, color:'#64748B' }
+        },
+        y2: {
+          position: 'right',
+          min: 0, max: 100,
+          grid: { display: false },
+          title: { display: true, text: 'Kümülatif (%)', font: { family:'Inter', size:11 }, color:'#DC2626' },
+          ticks: { font: { family:'Inter', size:11 }, color:'#DC2626', callback: v => v+'%' }
+        }
+      }
+    }
+  });
+}
+
+/* ═══ E4: Detay Tablosu ══════════════════════════════════ */
+let currentPage = 1;
+const PAGE_SIZE = 10;
+let e4Filtered = [];
+let expandedRow = null;
+
+function renderE4() {
+  const hat    = document.getElementById('e4-hat')?.value || '';
+  const hata   = document.getElementById('e4-hata')?.value || '';
+  const tespit = document.getElementById('e4-tespit')?.value || '';
+
+  e4Filtered = VERI;
+  if (hat)    e4Filtered = e4Filtered.filter(d => d.hat === hat);
+  if (hata)   e4Filtered = e4Filtered.filter(d => d.hataTipi === hata);
+  if (tespit) e4Filtered = e4Filtered.filter(d => d.tespitAsamasi === tespit);
+  e4Filtered = [...e4Filtered].sort((a,b) => b.tarihObj - a.tarihObj);
+
+  const container = document.getElementById('e4-body');
+  if (!e4Filtered.length) {
+    container.innerHTML = '<div class="state-box empty"><div class="icon">📭</div>Bu dönem için veri bulunmamaktadır.</div>';
+    return;
+  }
+
+  const toplamSayfa = Math.ceil(e4Filtered.length / PAGE_SIZE);
+  if (currentPage > toplamSayfa) currentPage = toplamSayfa;
+  const bas = (currentPage - 1) * PAGE_SIZE;
+  const sayfa = e4Filtered.slice(bas, bas + PAGE_SIZE);
+
+  function durumBadge(tespit) {
+    if (tespit === 'Müşteri İadesi') return '<span class="badge badge-acik">🔴 Açık</span>';
+    if (tespit === 'Final Kontrol')  return '<span class="badge badge-inceleme">🟡 İnceleniyor</span>';
+    return '<span class="badge badge-kapali">🟢 Kapalı</span>';
+  }
+
+  const satirlar = sayfa.map((d, i) => {
+    const idx = bas + i;
+    return `
+      <tr data-idx="${idx}" onclick="toggleDetay(${idx}, this)">
+        <td>${d.tarih}</td>
+        <td style="font-family:var(--mono);font-size:12px">${d.parcaNo}</td>
+        <td>${d.hat}</td>
+        <td><span class="hata-chip">${d.hataTipi}</span></td>
+        <td style="text-align:right;font-family:var(--mono)">${sayiBicim(d.hataAdedi,0)}</td>
+        <td class="para">${paraBicim(d.iskartaMaliyet)}</td>
+        <td>${d.tespitAsamasi}</td>
+        <td>${durumBadge(d.tespitAsamasi)}</td>
+      </tr>
+      <tr class="detail-row" id="detail-${idx}" style="display:none">
+        <td colspan="8">
+          <div class="detail-body">
+            <div class="detail-item"><strong>Parça No</strong>${d.parcaNo}</div>
+            <div class="detail-item"><strong>Vardiya</strong>${d.vardiya}</div>
+            <div class="detail-item"><strong>Üretim Adedi</strong>${sayiBicim(d.uretimAdedi,0)} adet</div>
+            <div class="detail-item"><strong>PPM (Bu Kayıt)</strong>${sayiBicim((d.hataAdedi/d.uretimAdedi)*1e6,0)}</div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Sayfalama butonları
+  const maxGoster = 5;
+  let paginasyonHTML = `
+    <button class="page-btn" onclick="sayfaGit(1)" ${currentPage===1?'disabled':''}>«</button>
+    <button class="page-btn" onclick="sayfaGit(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>
+  `;
+  let baslangic = Math.max(1, currentPage - Math.floor(maxGoster/2));
+  let bitis = Math.min(toplamSayfa, baslangic + maxGoster - 1);
+  for (let p = baslangic; p <= bitis; p++) {
+    paginasyonHTML += `<button class="page-btn ${p===currentPage?'current':''}" onclick="sayfaGit(${p})">${p}</button>`;
+  }
+  paginasyonHTML += `
+    <button class="page-btn" onclick="sayfaGit(${currentPage+1})" ${currentPage===toplamSayfa?'disabled':''}>›</button>
+    <button class="page-btn" onclick="sayfaGit(${toplamSayfa})" ${currentPage===toplamSayfa?'disabled':''}>»</button>
+    <span style="margin-left:8px">${sayiBicim(e4Filtered.length,0)} kayıt · Sayfa ${currentPage}/${toplamSayfa}</span>
+  `;
+
+  container.innerHTML = `
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>Parça No</th>
+              <th>Hat</th>
+              <th>Hata Tipi</th>
+              <th style="text-align:right">Hata Adedi</th>
+              <th>Iskarta Maliyeti</th>
+              <th>Tespit Aşaması</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>${satirlar}</tbody>
+        </table>
+      </div>
+      <div class="pagination">${paginasyonHTML}</div>
+    </div>
+  `;
+}
+
+function toggleDetay(idx, row) {
+  const detayRow = document.getElementById('detail-' + idx);
+  if (!detayRow) return;
+  const acik = detayRow.style.display !== 'none';
+  // Hepsini kapat
+  document.querySelectorAll('.detail-row').forEach(r => r.style.display='none');
+  document.querySelectorAll('tbody tr:not(.detail-row)').forEach(r => r.classList.remove('expanded'));
+  if (!acik) {
+    detayRow.style.display = 'table-row';
+    row.classList.add('expanded');
+  }
+}
+
+function sayfaGit(p) {
+  currentPage = p;
+  expandedRow = null;
+  renderE4();
+}
+
+/* ── Chart Yardımcıları ── */
+function destroyChart(id) {
+  if (chartInstances[id]) {
+    chartInstances[id].destroy();
+    delete chartInstances[id];
+  }
+}
+
+function chartOpts(yLabel, horizontal=false) {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: horizontal ? 'y' : 'x',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.raw.toLocaleString('tr-TR')} adet` } }
+    },
+    scales: {
+      x: { grid: { color: '#F1F5F9' }, ticks: { font: { family:'Inter', size:11 }, color:'#64748B' } },
+      y: {
+        grid: { color: '#F1F5F9' },
+        ticks: { font: { family:'Inter', size:11 }, color:'#64748B' },
+        title: { display: !horizontal, text: yLabel, font:{ family:'Inter', size:11 }, color:'#64748B' }
+      }
+    }
+  };
+}
+
+/* ── Başlat ── */
+veriYukle();
+</script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+/* VALEO Kalite Dashboard — Tasarım Sistemi */
+
+:root {
+  --color-primary: #1E40AF;
+  --color-reference: #94A3B8;
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+  --color-bg: #F8FAFC;
+  --color-card: #FFFFFF;
+  --color-border: #E2E8F0;
+  --color-text-title: #1E293B;
+  --color-text-sub: #334155;
+  --color-text-body: #475569;
+  --color-text-meta: #64748B;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text-body);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Layout ── */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.header {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.header h1 { font-size: 18px; font-weight: 700; }
+.header .meta { font-size: 12px; opacity: 0.8; }
+
+.nav {
+  display: flex;
+  gap: 2px;
+  background: #fff;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 24px;
+}
+.nav-btn {
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-sub);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-btn:hover { color: var(--color-primary); }
+.nav-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  padding: 12px 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-bar label { font-size: 12px; font-weight: 600; color: var(--color-text-meta); }
+.filter-bar select, .filter-bar input[type="date"] {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--color-text-sub);
+  background: #fff;
+}
+.filter-btn {
+  padding: 6px 14px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filter-btn:hover { background: #1e3a8a; }
+
+.main { flex: 1; padding: 20px 24px; overflow-y: auto; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Cards ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.kpi-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.kpi-label { font-size: 11px; font-weight: 600; color: var(--color-text-meta); text-transform: uppercase; letter-spacing: .4px; }
+.kpi-value { font-size: 28px; font-weight: 700; margin: 6px 0 4px; color: var(--color-text-title); }
+.kpi-delta { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+.kpi-delta.good { color: var(--color-success); }
+.kpi-delta.warn { color: var(--color-warning); }
+.kpi-delta.bad  { color: var(--color-danger); }
+
+/* ── Chart container ── */
+.chart-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  margin-bottom: 16px;
+}
+.chart-card h2 { font-size: 15px; font-weight: 600; color: var(--color-text-sub); margin-bottom: 16px; }
+.chart-wrap { position: relative; height: 280px; }
+
+/* ── Two-column layout ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── Table ── */
+.table-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.table-card h2 { font-size: 15px; font-weight: 600; color: var(--color-text-sub); padding: 16px 20px 12px; border-bottom: 1px solid var(--color-border); }
+.table-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  position: sticky; top: 0;
+  background: #F1F5F9;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-meta);
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  border-bottom: 1px solid var(--color-border);
+}
+tbody td { padding: 9px 14px; border-bottom: 1px solid #F1F5F9; color: var(--color-text-sub); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #F8FAFC; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;
+}
+.badge-red    { background: #FEE2E2; color: #B91C1C; }
+.badge-yellow { background: #FEF3C7; color: #B45309; }
+.badge-green  { background: #DCFCE7; color: #15803D; }
+
+.table-footer { padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--color-border); }
+.page-btns { display: flex; gap: 6px; }
+.page-btn {
+  padding: 4px 10px; border: 1px solid var(--color-border);
+  border-radius: 6px; background: #fff; font-size: 12px; cursor: pointer; color: var(--color-text-sub);
+}
+.page-btn:hover, .page-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+/* ── State messages ── */
+.state-msg {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px; gap: 10px; color: var(--color-text-meta);
+}
+.state-msg .icon { font-size: 36px; }
+.state-msg p { font-size: 14px; }
+.loading .icon::after { content: "⏳"; }
+.empty   .icon::after { content: "📭"; }
+.error   .icon::after { content: "⚠️"; }
+.loading p::after { content: "Veri yükleniyor…"; }
+.empty   p::after { content: "Bu dönem için veri bulunmamaktadır."; }
+.error   p::after { content: "Veri kaynağına erişilemiyor. Bağlantıyı kontrol edin."; }
+
+.section-title { font-size: 13px; font-weight: 600; color: var(--color-text-meta); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .4px; }
