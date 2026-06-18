@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VALEO — Ödev #1 Sunum</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1D2433;
+      color: #F1F3F9;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slides { width: 100%; height: 100vh; }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      padding: 60px 80px;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    .slide.active { display: flex; }
+
+    /* Slide backgrounds */
+    .slide-1 { background: linear-gradient(135deg, #1D2433 0%, #16445F 100%); }
+    .slide-2 { background: #1D2433; }
+    .slide-3 { background: #1D2433; }
+    .slide-4 { background: #243347; }
+    .slide-5 { background: #1D2433; }
+    .slide-6 { background: #243347; }
+    .slide-7 { background: #1D2433; }
+    .slide-8 { background: #243347; }
+    .slide-9 { background: linear-gradient(135deg, #16445F 0%, #1D2433 100%); }
+
+    /* Typography */
+    .tag {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #82E600;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      color: #F1F3F9;
+    }
+
+    h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #82E600;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: #A8B0C4;
+      max-width: 700px;
+    }
+
+    .accent { color: #82E600; }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      gap: 20px;
+      margin-top: 8px;
+    }
+    .cards-2 { grid-template-columns: 1fr 1fr; }
+    .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .card {
+      background: #1D2433;
+      border: 1px solid #16445F;
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .card-green { border-left: 4px solid #82E600; }
+    .card-blue  { border-left: 4px solid #16445F; }
+    .card-red   { border-left: 4px solid #EF4444; }
+
+    .card p { font-size: 15px; margin-top: 8px; }
+
+    /* Big stat */
+    .stat-row {
+      display: flex;
+      gap: 40px;
+      margin-top: 16px;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      color: #82E600;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: #7A8499;
+      margin-top: 4px;
+    }
+
+    /* List */
+    ul { list-style: none; margin-top: 8px; }
+    ul li {
+      font-size: 17px;
+      color: #D8DCE8;
+      padding: 10px 0;
+      border-bottom: 1px solid #16445F;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    ul li:last-child { border-bottom: none; }
+    ul li .dot {
+      width: 8px; height: 8px;
+      background: #82E600;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Compare table */
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 16px;
+    }
+    .compare-col {
+      background: #1D2433;
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid #16445F;
+    }
+    .compare-col.bad  { border-top: 4px solid #EF4444; }
+    .compare-col.good { border-top: 4px solid #82E600; }
+    .compare-col h3 { font-size: 18px; margin-bottom: 16px; }
+    .compare-col.bad h3  { color: #EF4444; }
+    .compare-col.good h3 { color: #82E600; }
+    .compare-col ul li { font-size: 15px; color: #A8B0C4; }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      background: rgba(130,230,0,0.15);
+      color: #82E600;
+      border: 1px solid #82E600;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* Cover subtitle */
+    .cover-sub {
+      font-size: 20px;
+      color: #A8B0C4;
+      margin-bottom: 48px;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 40px;
+      margin-top: 48px;
+    }
+    .cover-meta-item label {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #7A8499;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .cover-meta-item span {
+      font-size: 16px;
+      font-weight: 600;
+      color: #F1F3F9;
+    }
+
+    /* Nav */
+    .nav {
+      position: fixed;
+      bottom: 32px;
+      right: 48px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+    }
+    .nav button {
+      background: #243347;
+      border: 1px solid #16445F;
+      color: #F1F3F9;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .nav button:hover { background: #82E600; color: #1D2433; }
+    .nav button:disabled { opacity: 0.3; cursor: default; }
+    .nav button:disabled:hover { background: #243347; color: #F1F3F9; }
+    #slide-counter {
+      font-size: 13px;
+      color: #7A8499;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    /* Progress bar */
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: #82E600;
+      transition: width 0.3s;
+    }
+
+    /* Scenario boxes */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .scenario-box {
+      background: #1D2433;
+      border: 1px solid #16445F;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .scenario-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #82E600;
+    }
+    .scenario-box p { font-size: 13px; margin-top: 6px; }
+
+    .divider {
+      width: 48px;
+      height: 4px;
+      background: #82E600;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="slides">
+
+  <!-- Slayt 1: Kapak -->
+  <div class="slide slide-1 active">
+    <div class="tag">AdAstra × VALEO — Ödev #1</div>
+    <h1>Yönetişimli<br>Dashboard<br><span class="accent">Üretim Hattı</span></h1>
+    <p class="cover-sub">Claude'u sadece kullanmak değil — her seferinde aynı kalitede çıktı veren bir sistem kurmak.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <label>Ad Soyad</label>
+        <span>Can Keçeci</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Ekip</label>
+        <span>After-Market</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Senaryo</label>
+        <span>S2 — Kalite & Iskarta</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Araç</label>
+        <span>Claude (claude.ai)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slayt 2: Problem -->
+  <div class="slide slide-2">
+    <div class="tag">Problem</div>
+    <div class="divider"></div>
+    <h2>Neden sadece<br>"prompt yazmak" yetmez?</h2>
+    <div class="cards cards-2">
+      <div class="card card-red">
+        <h3>Şans faktörü</h3>
+        <p>Yönetişim olmadan aynı prompt her seferinde farklı çıktı verir. Tutarsızlık kurumsal kullanımda kabul edilemez.</p>
+      </div>
+      <div class="card card-red">
+        <h3>Ölçeklenemiyor</h3>
+        <p>Onlarca kişi aynı standardı sohbete yapıştırırsa token maliyeti katlanır, sonuçlar yine de tutarsız olur.</p>
+      </div>
+      <div class="card card-green">
+        <h3>Çözüm: Yönetişim katmanı</h3>
+        <p>Kurallar + standart + veri → Project katmanına taşınır. Sohbet kısa kalır, çıktı her zaman standartta gelir.</p>
+      </div>
+      <div class="card card-green">
+        <h3>Bu ödevin özü</h3>
+        <p>İyi çıktı şansa bağlı değil. Sistem kurulunca her seferinde aynı kalite gelir — kişiden bağımsız.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slayt 3: Senaryo & Veri -->
+  <div class="slide slide-3">
+    <div class="tag">Senaryo & Veri</div>
+    <div class="divider"></div>
+    <h2>S2 — Kalite & Iskarta Takibi</h2>
+    <p style="margin-bottom: 32px;">VALEO üretim hatlarında kalite sorunlarını izlemek, hata tipi / hat / tespit aşaması bazında iskartayı analiz etmek ve aksiyon önceliklendirmek için Kalite Mühendisi'ne yönelik dashboard.</p>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">200</div>
+        <div class="stat-label">Kayıt (sentetik)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Üretim Hattı</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Hata Tipi</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">39K</div>
+        <div class="stat-label">Toplam PPM</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3.3M₺</div>
+        <div class="stat-label">Toplam Iskarta</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slayt 4: Yönetişim Mimarisi -->
+  <div class="slide slide-4">
+    <div class="tag">Yönetişim Mimarisi</div>
+    <div class="divider"></div>
+    <h2>3 katmanlı sistem</h2>
+    <div class="cards cards-3">
+      <div class="card card-green">
+        <h3>Kalıcı Talimat</h3>
+        <p>10 kural Project Instructions'a yazıldı. Her sohbette otomatik geçerli — tekrar yazmak gerekmiyor.</p>
+        <br>
+        <p style="color:#82E600; font-size:13px;">Veriyi koda gömme · Türkçe etiket · ₺ biçimi · inline CSS yasak</p>
+      </div>
+      <div class="card card-green">
+        <h3>Knowledge Dosyası</h3>
+        <p>Üretim standardı (renk, tipografi, ekran anatomisi) Knowledge'a yüklendi. Sohbete yapıştırılmıyor.</p>
+        <br>
+        <p style="color:#82E600; font-size:13px;">uretim-standardi.md · renk.md</p>
+      </div>
+      <div class="card card-green">
+        <h3>Veri Dosyası</h3>
+        <p>200 satır veri.csv Knowledge olarak bağlandı. Sohbete kopyala-yapıştır yok, bağlam şişmiyor.</p>
+        <br>
+        <p style="color:#82E600; font-size:13px;">veri.csv → 483 Deformasyon ✅</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slayt 5: Tur A vs B -->
+  <div class="slide slide-5">
+    <div class="tag">Karşılaştırma</div>
+    <div class="divider"></div>
+    <h2>Tur A vs Tur B</h2>
+    <div class="compare">
+      <div class="compare-col bad">
+        <h3>Tur A — Donatımsız</h3>
+        <ul>
+          <li><div class="dot" style="background:#EF4444"></div>Yönetişim yok, boş sohbet</li>
+          <li><div class="dot" style="background:#EF4444"></div>Veri koda gömülmüş (32 satır)</li>
+          <li><div class="dot" style="background:#EF4444"></div>Inline CSS — standart dışı</li>
+          <li><div class="dot" style="background:#EF4444"></div>Türkçe/İngilizce karışık etiket</li>
+          <li><div class="dot" style="background:#EF4444"></div>Boş veri durumu yok</li>
+        </ul>
+      </div>
+      <div class="compare-col good">
+        <h3>Tur B — Donatılmış</h3>
+        <ul>
+          <li><div class="dot"></div>Project + Talimat + Knowledge aktif</li>
+          <li><div class="dot"></div>Veri Knowledge'dan canlı okundu</li>
+          <li><div class="dot"></div>Ayrı style.css — standart uygulandı</li>
+          <li><div class="dot"></div>Tüm etiketler Türkçe</li>
+          <li><div class="dot"></div>Her ekranda boş/hata/yükleme durumu</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slayt 6: Dashboard -->
+  <div class="slide slide-6">
+    <div class="tag">Çıktı</div>
+    <div class="divider"></div>
+    <h2>4 Ekranlı Dashboard</h2>
+    <div class="cards cards-2">
+      <div class="card card-blue">
+        <h3>E1 — Özet KPI</h3>
+        <p>PPM, İlk Geçiş Verimi, Toplam Iskarta ₺, Müşteri İade oranı. Renk = anlam: kırmızı kritik, yeşil iyi.</p>
+      </div>
+      <div class="card card-blue">
+        <h3>E2 — Trend</h3>
+        <p>Haftalık PPM trend çizgisi + aylık iskarta maliyet grafiği. İyileşiyor mu, kötüleşiyor mu?</p>
+      </div>
+      <div class="card card-blue">
+        <h3>E3 — Pareto</h3>
+        <p>Hata tipi Pareto analizi + hat bazlı maliyet kırılımı. Hangi hata en fazla maliyet yaratıyor?</p>
+      </div>
+      <div class="card card-blue">
+        <h3>E4 — Detay</h3>
+        <p>Filtrelenebilir kayıt tablosu. Hat, hata tipi, tespit aşamasına göre filtreleme + durum sütunu.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slayt 7: Doğrulama -->
+  <div class="slide slide-7">
+    <div class="tag">Doğrulama</div>
+    <div class="divider"></div>
+    <h2>6 Senaryo — 6/6 Başarılı</h2>
+    <div class="scenario-grid">
+      <div class="scenario-box">
+        <div class="scenario-num">S1</div>
+        <h3 style="font-size:15px; margin:8px 0 4px;">Tekrarlanabilirlik</h3>
+        <p>Aynı prompt 2 kez → aynı 4 ekran yapısı, aynı standart ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S2</div>
+        <h3 style="font-size:15px; margin:8px 0 4px;">Boş Veri</h3>
+        <p>Veri sıfırlandı → dashboard çökmedi, boş-durum mesajı gösterdi ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S3</div>
+        <h3 style="font-size:15px; margin:8px 0 4px;">Kural İhlali</h3>
+        <p>"Veriyi koda göm" istendi → talimat engelledi, Knowledge'dan okudu ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S4</div>
+        <h3 style="font-size:15px; margin:8px 0 4px;">Standart Uygulanışı</h3>
+        <p>"KPI panosu üret" → 2 kelimeyle tüm standart otomatik geldi ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S5</div>
+        <h3 style="font-size:15px; margin:8px 0 4px;">Canlı Veri</h3>
+        <p>Deformasyon sorgusu → Claude: 483, CSV: 483 — birebir eşleşti ✅</p>
+      </div>
+      <div class="scenario-box">
+        <div class="scenario-num">S6</div>
+        <h3 style="font-size:15px; margin:8px 0 4px;">Context Bütçesi</h3>
+        <p>Claude kendi bağlam yönetimi mimarisini açıkladı ✅</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slayt 8: Öğrenilen -->
+  <div class="slide slide-8">
+    <div class="tag">Öğrenilenler</div>
+    <div class="divider"></div>
+    <h2>3 Temel Çıkarım</h2>
+    <ul style="max-width: 700px;">
+      <li>
+        <div class="dot"></div>
+        <div>
+          <strong>Yönetişim = tekrarlanabilirlik.</strong>
+          <span style="color:#A8B0C4;"> Talimat + Knowledge olmadan iyi çıktı şansa bağlı. Sistem kurulunca şans denklemden çıkıyor.</span>
+        </div>
+      </li>
+      <li>
+        <div class="dot"></div>
+        <div>
+          <strong>Context bütçesi kurumsal önceliktir.</strong>
+          <span style="color:#A8B0C4;"> Standartları sohbete yapıştırmak yerine Knowledge'a taşımak token maliyetini ve tutarsızlığı aynı anda çözüyor.</span>
+        </div>
+      </li>
+      <li>
+        <div class="dot"></div>
+        <div>
+          <strong>Değerlendirilen çıktı değil, sistem.</strong>
+          <span style="color:#A8B0C4;"> Tek seferlik güzel dashboard yapmak kolay. Aynı standardı her seferinde üreten bir yapı kurmak asıl yetkinlik.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Slayt 9: Kapanış -->
+  <div class="slide slide-9">
+    <div class="tag">Teşekkürler</div>
+    <h1>Sistem kuruldu.<br><span class="accent">Standart</span><br>artık otomatik.</h1>
+    <div class="cover-meta" style="margin-top: 48px;">
+      <div class="cover-meta-item">
+        <label>Ad Soyad</label>
+        <span>Can Keçeci</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Araç</label>
+        <span>Claude (claude.ai)</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Senaryo</label>
+        <span>S2 — Kalite & Iskarta</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Sonuç</label>
+        <span style="color:#82E600;">6/6 Doğrulama ✅</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button id="prev" onclick="changeSlide(-1)" disabled>←</button>
+  <span id="slide-counter">1 / 9</span>
+  <button id="next" onclick="changeSlide(1)">→</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+
+  function changeSlide(dir) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, current + dir));
+    slides[current].classList.add('active');
+    document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === total - 1;
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+  });
+
+  document.getElementById('progress').style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>
